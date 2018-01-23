@@ -1,0 +1,4 @@
+Library/
+Temp/
+.vscode/settings.json
+Assembly-CSharp.csproj
