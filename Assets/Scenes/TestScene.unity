@@ -117,6 +117,7 @@ GameObject:
   m_Component:
   - component: {fileID: 287668034}
   - component: {fileID: 287668035}
+  - component: {fileID: 287668036}
   m_Layer: 0
   m_Name: Ballista
   m_TagString: Untagged
@@ -150,6 +151,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2237ade565d135e4cb65a95a085d8341, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &287668036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 287668033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eab6e1d662eed94bb15281a61acbb04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ballista: {fileID: 287668035}
 --- !u!1001 &327118606
 Prefab:
   m_ObjectHideFlags: 0

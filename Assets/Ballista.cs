@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class Ballista : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
+	private bool isAiming;
+
+	private Rigidbody2D rb;
+
+	void Start() {
+		rb = GetComponent<Rigidbody2D>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+
+	public void Aim(Vector2 firstPos, Vector2 secondPos) {
+
 	}
 }
