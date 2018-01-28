@@ -153,6 +153,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flightGroove: {fileID: 1327523639}
   shootPoint: {fileID: 1435838554}
+  maxShootForce: 40
+  arrowPrefabs:
+  - {fileID: 1713057566286246, guid: 1b30d46e7e788a146ac01e67b5745032, type: 2}
+  unlimitedAmmo: 1
+  arrowQueue: 00000000
 --- !u!114 &287668036
 MonoBehaviour:
   m_ObjectHideFlags: 0

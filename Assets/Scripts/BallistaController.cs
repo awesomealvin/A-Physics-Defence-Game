@@ -33,7 +33,6 @@ public class BallistaController : MonoBehaviour {
 			isMouseDown = true;
 			initialTouchPos = GetCurrentMousePos();
 			
-			
 		}
 
 		if (isMouseDown) {
@@ -44,6 +43,8 @@ public class BallistaController : MonoBehaviour {
 
 		if (Input.GetMouseButtonUp(0)) {
 			isMouseDown = false;
+			ballista.Shoot(currentDrawLength/maxDrawLength);
+			
 		}
 	}
 
@@ -54,8 +55,8 @@ public class BallistaController : MonoBehaviour {
 	private void CalculateLength() {
 		currentDrawLength = (currentTouchPos - initialTouchPos).magnitude;
 		currentDrawLength = (currentDrawLength > maxDrawLength)?maxDrawLength:currentDrawLength;
-		float _percentage = currentDrawLength / maxDrawLength;
+		float percentage = currentDrawLength / maxDrawLength;
 		
-		lengthPercentageText.text = (_percentage*100f)+"%";
+		lengthPercentageText.text = (percentage*100f)+"%";
 	}
 }
