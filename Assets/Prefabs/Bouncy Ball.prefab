@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4915465137521782}
   - component: {fileID: 212944647714871930}
   - component: {fileID: 50266824417701550}
-  - component: {fileID: 58504052656889852}
+  - component: {fileID: 58514262194012250}
   m_Layer: 0
   m_Name: Bouncy Ball
   m_TagString: Untagged
@@ -62,7 +62,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &58504052656889852
+--- !u!58 &58514262194012250
 CircleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -76,7 +76,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.25
 --- !u!212 &212944647714871930
 SpriteRenderer:
   m_ObjectHideFlags: 1

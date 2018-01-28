@@ -23,7 +23,7 @@ public class BallistaController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-
+		EnableLengthPercentageText(false);
 	}
 
 	// Update is called once per frame
@@ -32,6 +32,7 @@ public class BallistaController : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			isMouseDown = true;
 			initialTouchPos = GetCurrentMousePos();
+			EnableLengthPercentageText(true);
 			
 		}
 
@@ -44,6 +45,7 @@ public class BallistaController : MonoBehaviour {
 		if (Input.GetMouseButtonUp(0)) {
 			isMouseDown = false;
 			ballista.Shoot(currentDrawLength/maxDrawLength);
+			EnableLengthPercentageText(false);
 			
 		}
 	}
@@ -58,5 +60,11 @@ public class BallistaController : MonoBehaviour {
 		float percentage = currentDrawLength / maxDrawLength;
 		
 		lengthPercentageText.text = (percentage*100f)+"%";
+	}
+
+	private void EnableLengthPercentageText(bool value) {
+		if (lengthPercentageText != null) {
+			lengthPercentageText.enabled = value;
+		}
 	}
 }
