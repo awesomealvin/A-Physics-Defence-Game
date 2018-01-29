@@ -70,6 +70,7 @@ public class Ballista : MonoBehaviour {
 			// Dequeue if unlimited arrow = true
 			if (unlimitedAmmo) {
 				nextArrow = arrowPrefabs[(int) arrows.Peek()];
+				arrows.Enqueue(arrows.Dequeue());
 			} else {
 				nextArrow = arrowPrefabs[(int) arrows.Dequeue()];
 			}
