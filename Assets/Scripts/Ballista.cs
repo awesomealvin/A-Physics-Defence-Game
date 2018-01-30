@@ -28,15 +28,15 @@ public class Ballista : MonoBehaviour {
 
 	void Start() {
 		rb = GetComponent<Rigidbody2D>();
-		arrows = ArrowListToQueue(arrowQueue);
+		arrows = ListToQueue<ArrowType>(arrowQueue);
 	}
 
 	/**
 	 * Converts the arrows list to a queue
 	 */
-	private Queue<ArrowType> ArrowListToQueue(List<ArrowType> list) {
-		Queue<ArrowType> newQueue = new Queue<ArrowType>();
-		foreach (ArrowType a in list) {
+	public static Queue<T> ListToQueue<T>(List<T> list) {
+		Queue<T> newQueue = new Queue<T>();
+		foreach (T a in list) {
 			newQueue.Enqueue(a);
 		}
 
