@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Cannon : MonoBehaviour {
 
+	public Transform targetPos;
+
 	private bool isRotating = false;
 	private bool hasReloaded = true;
 	[SerializeField]
 	// The time (in seconds) it takes to reload a cannon ball after shooting
-	private float reloadSpeed = 5f;
+	private float reloadSpeed = 2f;
 	[SerializeField]
 	// The "stall" delay (in seconds). For pauses inbetween things such as shooting and rotating
 	private float stallTime = 0.75f;
@@ -18,15 +20,15 @@ public class Cannon : MonoBehaviour {
 
 	[SerializeField]
 	// Maximum angle the barrel could rotate to (for the rng)
-	private float maxAngle;
+	private float maxAngle = 89f;
 	[SerializeField]
 	// Minimum angle the barrel could rotate to (for the rng)
-	private float minAngle;
+	private float minAngle = 0f;
 	// The rotation that the barrel should rotate towards
 	private Quaternion targetRotation;
 	[SerializeField]
 	// Speed of the rotation
-	private float rotationSpeed;
+	private float rotationSpeed = 20f;
 
 	[SerializeField]
 	private Transform barrel;
@@ -62,7 +64,36 @@ public class Cannon : MonoBehaviour {
 		// Could put the statement in the shooting function, but could add other stuff in this
 		// section later on...
 		if (!isRotating && hasReloaded && !isStalled) {
-			Shoot(20f);
+			float gravity = Physics2D.gravity.magnitude;
+			Vector3 target = targetPos.position;
+			Vector3 source = shootPoint.position;
+
+			Vector3 difference = target - source;
+
+			// Get the angle and convert to radians
+			float angle = barrel.eulerAngles.z;
+			float radians = angle * Mathf.Deg2Rad;
+
+			// Find the opposite and adjacent from the angle
+			float opposite = Mathf.Sin(radians); // y
+			float adjacent = Mathf.Cos(radians); // x
+
+			// Horizontal distance between source and target
+			float xDistance = difference.x;
+			
+			
+			float xComponent = xDistance / adjacent;
+			float yComponent = opposite * xComponent;
+
+			float xTime = Mathf.Pow(xComponent, 2);
+			xTime = xTime * (gravity/2);
+
+			yComponent += difference.y;
+
+			float force = Mathf.Sqrt((-xTime)/yComponent);
+
+			Shoot(force);
+
 		}
 	}
 
@@ -75,7 +106,8 @@ public class Cannon : MonoBehaviour {
 			GameObject nextCannonBall = cannonBallPrefabs[(int) cannonBalls.Dequeue()];
 			GameObject projectile = Instantiate(nextCannonBall, shootPoint.position, Quaternion.identity);
 			projectile.GetComponent<Rigidbody2D>().AddForce(barrel.right * force, ForceMode2D.Impulse);
-			
+			//projectile.GetComponent<Rigidbody2D>().velocity = barrel.right*force;
+
 			// Sets it so it can't shoot again unless reloaded
 			hasReloaded = false;
 			// Pauses the cannon for a bit by "stalling?" it
@@ -84,7 +116,7 @@ public class Cannon : MonoBehaviour {
 			// Generates a new target rotation for the barrel
 			SetTargetRotation();
 			// Resets the isStalled boolean after a delay
-			StartCoroutine("ShootingDelay");
+			StartCoroutine("Continue");
 			// Resets the hasReloaded boolean so that it can shoot again
 			StartCoroutine("Reload");
 		}

@@ -10,7 +10,7 @@ public class Ballista : MonoBehaviour {
 	private Transform shootPoint;
 
 	[SerializeField]
-	private float maxShootForce = 10;
+	private float maxShootForce = 40f;
 	[SerializeField]
 	private GameObject[] arrowPrefabs;
 	[SerializeField]

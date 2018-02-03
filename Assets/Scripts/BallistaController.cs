@@ -10,7 +10,7 @@ public class BallistaController : MonoBehaviour {
 	private Ballista ballista;
 
 	[SerializeField]
-	private float maxDrawLength;
+	private float maxDrawLength = 5f;
 	private float currentDrawLength;
 
 	[SerializeField]
