@@ -19,6 +19,9 @@ public class Cannon : MonoBehaviour {
 	public bool isStalled = false;
 
 	[SerializeField]
+	private readonly float defaultForce = 20f;
+
+	[SerializeField]
 	// Maximum angle the barrel could rotate to (for the rng)
 	private float maxAngle = 89f;
 	[SerializeField]
@@ -40,8 +43,8 @@ public class Cannon : MonoBehaviour {
 	private GameObject[] cannonBallPrefabs;
 	[SerializeField]
 	[Tooltip("Is a list, but will be converted to a queue during runtime")]
-	private List<CannonBall.CannonBallType> cannonBallQueue;
-	private Queue<CannonBall.CannonBallType> cannonBalls;
+	private List<CannonBall.CannonBallType> cannonBallListQueue;
+	private Queue<GameObject> cannonBallQueue;
 
 	// Used to check if the cannon is currently rotating
 	Quaternion previousRotation;
@@ -53,7 +56,7 @@ public class Cannon : MonoBehaviour {
 
 		// Uses the ballista's method (because i'm lazy to recode) to convert the list in the
 		// inspector to the queue. Because queue's aren't available to be shown in the inspector :(
-		cannonBalls = Ballista.ListToQueue<CannonBall.CannonBallType>(cannonBallQueue);
+		cannonBallQueue = Ballista.ListToGameObjectQueue<CannonBall.CannonBallType>(cannonBallListQueue, cannonBallPrefabs);
 	}
 
 	// Update is called once per frame
@@ -64,37 +67,64 @@ public class Cannon : MonoBehaviour {
 		// Could put the statement in the shooting function, but could add other stuff in this
 		// section later on...
 		if (!isRotating && hasReloaded && !isStalled) {
-			float gravity = Physics2D.gravity.magnitude;
-			Vector3 target = targetPos.position;
-			Vector3 source = shootPoint.position;
-
-			Vector3 difference = target - source;
-
-			// Get the angle and convert to radians
-			float angle = barrel.eulerAngles.z;
-			float radians = angle * Mathf.Deg2Rad;
-
-			// Find the opposite and adjacent from the angle
-			float opposite = Mathf.Sin(radians); // y
-			float adjacent = Mathf.Cos(radians); // x
-
-			// Horizontal distance between source and target
-			float xDistance = difference.x;
-			
-			
-			float xComponent = xDistance / adjacent;
-			float yComponent = opposite * xComponent;
-
-			float xTime = Mathf.Pow(xComponent, 2);
-			xTime = xTime * (gravity/2);
-
-			yComponent += difference.y;
-
-			float force = Mathf.Sqrt((-xTime)/yComponent);
-
-			Shoot(force);
-
+			Shoot(PrepareShot());
 		}
+	}
+
+	/// <summary>
+	/// Prepares the shot by calculating the force needed
+	/// </summary>
+	/// <returns>The force calculated by the CalculateForce() function</returns>
+	float PrepareShot() {
+		float force = defaultForce;
+		if (cannonBallQueue.Count > 0) {
+			Rigidbody2D nextCannonBallRb = cannonBallQueue.Peek().GetComponent<Rigidbody2D>();
+			force = CalculateForce(shootPoint.position, targetPos.position, barrel.eulerAngles.z, nextCannonBallRb);
+		}
+		return force;
+	}
+
+	/// <summary>
+	/// Uses the 4 equations of motion for a projectile, or the four projectile motion formulas? idk
+	/// Anyways, uses some physics formulas to calculate the force (initial velocity).
+	/// </summary>
+	/// <param name="source">Position of where the projectile is being shot from</param>
+	/// <param name="target">The target position where the projectile should land</param>
+	/// <param name="angle">The angle in degrees (or Z value) the projectile should launch at</param>
+	/// <param name="projectileRb">The rigidbody2D component of the projectile for the mass and gravity scale</param>
+	/// <returns>float value of the calculated force</returns>
+	float CalculateForce(Vector2 source, Vector2 target, float angle, Rigidbody2D projectileRb) {
+		float gravity = Physics2D.gravity.magnitude * projectileRb.gravityScale;
+		Vector2 difference = target - source;
+
+		// Get the angle and convert to radians
+		float radians = angle * Mathf.Deg2Rad;
+
+		// Find the opposite and adjacent from the angle
+		float opposite = Mathf.Sin(radians); // y
+		float adjacent = Mathf.Cos(radians); // x
+
+		// Horizontal distance between source and target
+		float xDistance = difference.x;
+
+		/**
+		 * From here on, the names of these variables probably won't make sense.
+		 * I just converted it to code from using Projectile Motion Formulas...
+		 */
+
+		float xComponent = xDistance / adjacent;
+		float yComponent = opposite * xComponent;
+
+		float xTime = Mathf.Pow(xComponent, 2);
+		xTime = xTime * (gravity / 2);
+
+		yComponent += difference.y;
+
+		// force or initial velocity, same thing
+		float force = Mathf.Sqrt((-xTime) / yComponent);
+		// apply mass scale
+		force *= projectileRb.mass;
+		return force;
 	}
 
 	/// <summary>
@@ -102,8 +132,8 @@ public class Cannon : MonoBehaviour {
 	/// </summary>
 	/// <param name="force">The amount of force to apply</param> 
 	void Shoot(float force) {
-		if (cannonBalls.Count > 0) {
-			GameObject nextCannonBall = cannonBallPrefabs[(int) cannonBalls.Dequeue()];
+		if (cannonBallQueue.Count > 0) {
+			GameObject nextCannonBall = cannonBallQueue.Dequeue();
 			GameObject projectile = Instantiate(nextCannonBall, shootPoint.position, Quaternion.identity);
 			projectile.GetComponent<Rigidbody2D>().AddForce(barrel.right * force, ForceMode2D.Impulse);
 			//projectile.GetComponent<Rigidbody2D>().velocity = barrel.right*force;

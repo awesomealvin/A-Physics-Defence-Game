@@ -21,23 +21,24 @@ public class Ballista : MonoBehaviour {
 	// Arrow Queue to be converted to an actaul queue.
 	// Is a list because it can be serialized
 	[SerializeField]
-	private List<ArrowType> arrowQueue;
-	private Queue<ArrowType> arrows;
+	private List<ArrowType> arrowQueueList;
+	private Queue<GameObject> arrowQueue;
 
 	private Rigidbody2D rb;
 
 	void Start() {
 		rb = GetComponent<Rigidbody2D>();
-		arrows = ListToQueue<ArrowType>(arrowQueue);
+		arrowQueue = ListToGameObjectQueue<ArrowType>(arrowQueueList, arrowPrefabs);
 	}
 
 	/**
 	 * Converts the arrows list to a queue
 	 */
-	public static Queue<T> ListToQueue<T>(List<T> list) {
-		Queue<T> newQueue = new Queue<T>();
-		foreach (T a in list) {
-			newQueue.Enqueue(a);
+	public static Queue<GameObject> ListToGameObjectQueue<E>(List<E> list, GameObject[] prefabs) {
+		Queue<GameObject> newQueue = new Queue<GameObject>();
+		foreach (E a in list) {
+			GameObject nextItem = prefabs[System.Convert.ToInt32(a)];
+			newQueue.Enqueue(nextItem);
 		}
 
 		return newQueue;
@@ -65,14 +66,14 @@ public class Ballista : MonoBehaviour {
 	/// </summary>
 	/// <param name="forcePercentage">Percentage of the maximum shoot force to apply</param>
 	public void Shoot(float forcePercentage) {
-		if (arrows.Count > 0) {
+		if (arrowQueue.Count > 0) {
 			GameObject nextArrow;
 			// Dequeue if unlimited arrow = true
 			if (unlimitedAmmo) {
-				nextArrow = arrowPrefabs[(int) arrows.Peek()];
-				arrows.Enqueue(arrows.Dequeue());
+				nextArrow = arrowQueue.Peek();
+				arrowQueue.Enqueue(arrowQueue.Dequeue());
 			} else {
-				nextArrow = arrowPrefabs[(int) arrows.Dequeue()];
+				nextArrow = arrowQueue.Dequeue();
 			}
 
 			// Instantiates the arrow

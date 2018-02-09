@@ -482,6 +482,11 @@ Prefab:
       propertyPath: cannonBallQueue.Array.size
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 114743135496499530, guid: a659aea89bddd57498bb413ca4e2c42c,
+        type: 2}
+      propertyPath: cannonBallListQueue.Array.size
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4443738905027544, guid: a659aea89bddd57498bb413ca4e2c42c, type: 2}
       propertyPath: m_LocalPosition.x
       value: 13.6
@@ -522,29 +527,34 @@ Prefab:
     - target: {fileID: 114743135496499530, guid: a659aea89bddd57498bb413ca4e2c42c,
         type: 2}
       propertyPath: reloadSpeed
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4185486702673470, guid: a659aea89bddd57498bb413ca4e2c42c, type: 2}
       propertyPath: m_LocalRotation.z
-      value: 0.14496067
+      value: 0.38268343
       objectReference: {fileID: 0}
     - target: {fileID: 4185486702673470, guid: a659aea89bddd57498bb413ca4e2c42c, type: 2}
       propertyPath: m_LocalRotation.w
-      value: 0.9894374
+      value: 0.92387956
       objectReference: {fileID: 0}
     - target: {fileID: 4185486702673470, guid: a659aea89bddd57498bb413ca4e2c42c, type: 2}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 16.67
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 114743135496499530, guid: a659aea89bddd57498bb413ca4e2c42c,
         type: 2}
       propertyPath: stallTime
-      value: 0.125
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 114743135496499530, guid: a659aea89bddd57498bb413ca4e2c42c,
         type: 2}
       propertyPath: rotationSpeed
-      value: 80
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 114743135496499530, guid: a659aea89bddd57498bb413ca4e2c42c,
+        type: 2}
+      propertyPath: minAngle
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a659aea89bddd57498bb413ca4e2c42c, type: 2}
