@@ -7,6 +7,14 @@ using UnityEngine.UI;
 public class BallistaController : MonoBehaviour {
 
 	[SerializeField]
+	private RawImage shootTouchArea;
+	bool hasTouchedShootArea = false;
+
+	[SerializeField]
+	private RawImage abilityTouchArea;
+	bool hasTouchedAbilityArea = false;
+
+	[SerializeField]
 	private Ballista ballista;
 
 	[SerializeField]
@@ -28,26 +36,83 @@ public class BallistaController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
+		ManageTouches();
+	}
 
+	bool HasTouchAreas() {
+		if (shootTouchArea != null && abilityTouchArea != null) {
+			return true;
+		}
+		return false;
+	}
+
+	void ManageTouches() {
 		if (Input.GetMouseButtonDown(0)) {
+			// Checks if the shoot area has been touched
+			hasTouchedShootArea = IsOnShootTouchArea(GetCurrentMousePos());
+			// Checks if the ability area has been touched
+			hasTouchedAbilityArea = IsOnAbilityTouchArea(GetCurrentMousePos());
+
 			isMouseDown = true;
 			initialTouchPos = GetCurrentMousePos();
-			EnableLengthPercentageText(true);
-			
 		}
 
 		if (isMouseDown) {
 			currentTouchPos = GetCurrentMousePos();
-			ballista.Aim(initialTouchPos, currentTouchPos);
-			CalculateLength();
+
+			/**
+			 * Abilities
+			 */
+			if (hasTouchedAbilityArea) {
+
+			}
+
+			/**
+			 * Shooting
+			 */
+			if (hasTouchedShootArea) {
+				EnableLengthPercentageText(true);
+				ballista.Aim(initialTouchPos, currentTouchPos);
+				CalculateLength();
+			}
+
 		}
 
 		if (Input.GetMouseButtonUp(0)) {
 			isMouseDown = false;
-			ballista.Shoot(currentDrawLength/maxDrawLength);
-			EnableLengthPercentageText(false);
-			
+
+			/**
+			 * Abilities
+			 */
+			if (hasTouchedAbilityArea) {
+
+			}
+
+			/**
+			 * Shooting
+			 */
+			if (hasTouchedShootArea) {
+				ballista.Shoot(currentDrawLength / maxDrawLength);
+				EnableLengthPercentageText(false);
+			}
+
 		}
+	}
+
+	bool IsOnShootTouchArea(Vector2 touchPos) {
+		if (RectTransformUtility.RectangleContainsScreenPoint(shootTouchArea.rectTransform, touchPos)) {
+			Debug.Log("Touched Shooting Area");
+			return true;
+		}
+		return false;
+	}
+
+	bool IsOnAbilityTouchArea(Vector2 touchPos) {
+		if (RectTransformUtility.RectangleContainsScreenPoint(abilityTouchArea.rectTransform, touchPos)) {
+			Debug.Log("Touched Ability Area");
+			return true;
+		}
+		return false;
 	}
 
 	private Vector2 GetCurrentMousePos() {
@@ -56,10 +121,10 @@ public class BallistaController : MonoBehaviour {
 
 	private void CalculateLength() {
 		currentDrawLength = (currentTouchPos - initialTouchPos).magnitude;
-		currentDrawLength = (currentDrawLength > maxDrawLength)?maxDrawLength:currentDrawLength;
+		currentDrawLength = (currentDrawLength > maxDrawLength) ? maxDrawLength : currentDrawLength;
 		float percentage = currentDrawLength / maxDrawLength;
-		
-		lengthPercentageText.text = (percentage*100f)+"%";
+
+		lengthPercentageText.text = (percentage * 100f) + "%";
 	}
 
 	private void EnableLengthPercentageText(bool value) {
