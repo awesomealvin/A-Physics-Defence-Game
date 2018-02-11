@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetPos: {fileID: 0}
-  reloadSpeed: 5
+  reloadSpeed: 2
   stallTime: 0.75
   isStalled: 0
   maxAngle: 88
@@ -231,7 +231,7 @@ MonoBehaviour:
   shootPoint: {fileID: 4681306695609094}
   cannonBallPrefabs:
   - {fileID: 1838936070866134, guid: 536e5c796da594c41ba52b902fc130c4, type: 2}
-  cannonBallQueue: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
+  cannonBallListQueue: 
 --- !u!212 &212293832439861822
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -4,7 +4,15 @@ using UnityEngine;
 
 public class Cannon : MonoBehaviour {
 
+	[SerializeField]
+	private GameObject debugCircle;
+
 	public Transform targetPos;
+
+	[SerializeField] 
+	private float timeToActivate = 3f;
+	private float startTime;
+	private bool isDisabled = true;
 
 	private bool isRotating = false;
 	private bool hasReloaded = true;
@@ -33,6 +41,9 @@ public class Cannon : MonoBehaviour {
 	// Speed of the rotation
 	private float rotationSpeed = 20f;
 
+	private GameObject[] targets;
+	private GameObject selectedTarget;
+
 	[SerializeField]
 	private Transform barrel;
 	[SerializeField]
@@ -50,17 +61,31 @@ public class Cannon : MonoBehaviour {
 	Quaternion previousRotation;
 
 	// Use this for initialization
-	void Start() {
+	void Awake() {
 		previousRotation = barrel.rotation;
-		targetRotation = barrel.rotation;
+		SetTargetRotation();
+		//targetRotation = barrel.rotation;
 
 		// Uses the ballista's method (because i'm lazy to recode) to convert the list in the
 		// inspector to the queue. Because queue's aren't available to be shown in the inspector :(
 		cannonBallQueue = Ballista.ListToGameObjectQueue<CannonBall.CannonBallType>(cannonBallListQueue, cannonBallPrefabs);
+		
+		if (isDisabled) {
+			StartCoroutine("Enable", timeToActivate);
+		}
+	}
+
+	IEnumerator Enable() {
+		yield return new WaitForSeconds(timeToActivate);
+		isDisabled = false;
 	}
 
 	// Update is called once per frame
 	void Update() {
+		if (isDisabled) {
+			return;
+		}
+
 		RotateBarrel();
 
 		// If it ain't rotating, has reloaded, and is not stalled, then it can shoot...
@@ -72,14 +97,15 @@ public class Cannon : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Prepares the shot by calculating the force needed
+	/// Prepares the shot by calculating the force needed, and the target position
 	/// </summary>
 	/// <returns>The force calculated by the CalculateForce() function</returns>
 	float PrepareShot() {
 		float force = defaultForce;
 		if (cannonBallQueue.Count > 0) {
 			Rigidbody2D nextCannonBallRb = cannonBallQueue.Peek().GetComponent<Rigidbody2D>();
-			force = CalculateForce(shootPoint.position, targetPos.position, barrel.eulerAngles.z, nextCannonBallRb);
+			Vector2 targetPosition = PrepareTargetPosition("Block");
+			force = CalculateForce(shootPoint.position, targetPosition, barrel.eulerAngles.z, nextCannonBallRb);
 		}
 		return force;
 	}
@@ -146,9 +172,11 @@ public class Cannon : MonoBehaviour {
 			// Generates a new target rotation for the barrel
 			SetTargetRotation();
 			// Resets the isStalled boolean after a delay
-			StartCoroutine("Continue");
+			StartCoroutine("Continue",stallTime);
 			// Resets the hasReloaded boolean so that it can shoot again
 			StartCoroutine("Reload");
+
+			SelectRandomTargetPosition(selectedTarget);
 		}
 	}
 
@@ -193,9 +221,50 @@ public class Cannon : MonoBehaviour {
 	/// <summary>
 	/// Continues the cannon so that it is not stalled after the defined time (stall time)
 	/// </summary>
+	/// <param name="time">Time in seconds it takes to continue</param>
 	IEnumerator Continue() {
 		yield return new WaitForSeconds(stallTime);
 		isStalled = false;
+	}
+
+	void SearchForTargets(string tag) {
+		targets = GameObject.FindGameObjectsWithTag(tag);
+	}
+
+	GameObject SelectRandomTarget() {
+		GameObject target = null;
+		if (targets.Length > 0) {
+			int index = Random.Range(0, targets.Length - 1);
+			target = targets[index];
+		}
+		return target;
+	}
+
+	Vector2 SelectRandomTargetPosition(GameObject target) {
+		Collider2D collider = target.GetComponent<Collider2D>();
+		if (collider != null) {
+			Bounds bounds = collider.bounds;
+			Vector2 max = bounds.max;
+			Vector2 min = bounds.min;
+
+			float x = Random.Range(min.x, max.x);
+			float y = Random.Range(min.y, max.y);
+
+			Vector2 position = new Vector2(x, y);
+			return position;
+		} 
+
+		return target.transform.position;
+	}
+
+	Vector2 PrepareTargetPosition(string tag) {
+		SearchForTargets(tag);
+		selectedTarget = SelectRandomTarget();
+		return SelectRandomTargetPosition(selectedTarget);
+	}
+
+	private void DebugPosition(Vector2 position) {
+		Instantiate(debugCircle, position, Quaternion.identity);
 	}
 
 }

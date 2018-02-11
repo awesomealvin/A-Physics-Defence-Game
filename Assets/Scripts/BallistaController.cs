@@ -29,6 +29,7 @@ public class BallistaController : MonoBehaviour {
 	private Vector2 initialTouchPos;
 	private Vector2 currentTouchPos;
 
+
 	// Use this for initialization
 	void Start() {
 		EnableLengthPercentageText(false);
@@ -52,6 +53,10 @@ public class BallistaController : MonoBehaviour {
 			hasTouchedShootArea = IsOnShootTouchArea(GetCurrentMousePos());
 			// Checks if the ability area has been touched
 			hasTouchedAbilityArea = IsOnAbilityTouchArea(GetCurrentMousePos());
+
+			if (hasTouchedAbilityArea) {
+				ballista.UseLastBallAbility();
+			}
 
 			isMouseDown = true;
 			initialTouchPos = GetCurrentMousePos();
@@ -132,4 +137,5 @@ public class BallistaController : MonoBehaviour {
 			lengthPercentageText.enabled = value;
 		}
 	}
+
 }

@@ -18,6 +18,8 @@ public class Ballista : MonoBehaviour {
 
 	private bool isAiming;
 
+	private Ball lastBall;
+
 	// Arrow Queue to be converted to an actaul queue.
 	// Is a list because it can be serialized
 	[SerializeField]
@@ -82,10 +84,21 @@ public class Ballista : MonoBehaviour {
 			float force = forcePercentage * maxShootForce;
 			// Adds the force to the instantiated projectile
 			projectile.GetComponent<Rigidbody2D>().AddForce(flightGroove.right * force, ForceMode2D.Impulse);
+			SetLastBall(projectile);
 
 		} else {
 			Debug.Log("No more arrows!");
 		}
 
+	}
+
+	public void UseLastBallAbility() {
+		if (lastBall != null) {
+			lastBall.UseAbility();
+		}
+	}
+
+	void SetLastBall(GameObject ball) {
+		lastBall = ball.GetComponent<Ball>();
 	}
 }
