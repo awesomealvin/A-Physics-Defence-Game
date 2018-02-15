@@ -29,7 +29,6 @@ public class BallistaController : MonoBehaviour {
 	private Vector2 initialTouchPos;
 	private Vector2 currentTouchPos;
 
-
 	// Use this for initialization
 	void Start() {
 		EnableLengthPercentageText(false);
@@ -48,6 +47,9 @@ public class BallistaController : MonoBehaviour {
 	}
 
 	void ManageTouches() {
+
+/* ENABLE WHEN RELEASED FOR WINDOWS
+#if UNITY_STANDALONE_WIN		
 		if (Input.GetMouseButtonDown(0)) {
 			// Checks if the shoot area has been touched
 			hasTouchedShootArea = IsOnShootTouchArea(GetCurrentMousePos());
@@ -61,9 +63,39 @@ public class BallistaController : MonoBehaviour {
 			isMouseDown = true;
 			initialTouchPos = GetCurrentMousePos();
 		}
+#endif
+ */
+
+
+#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS
+
+		if (Input.touchCount > 0) {
+			Touch touch = Input.GetTouch(0);
+			if (touch.phase == TouchPhase.Began) {
+				// Checks if the shoot area has been touched
+				hasTouchedShootArea = IsOnShootTouchArea(GetCurrentTouchPos());
+				// Checks if the ability area has been touched
+				hasTouchedAbilityArea = IsOnAbilityTouchArea(GetCurrentTouchPos());
+
+				if (hasTouchedAbilityArea) {
+					ballista.UseLastBallAbility();
+				}
+
+				isMouseDown = true;
+				initialTouchPos = GetCurrentTouchPos();
+			}
+		}
+
+#endif
 
 		if (isMouseDown) {
+#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS
+			currentTouchPos = GetCurrentTouchPos();
+#endif
+
+#if UNITY_STANDALONE_WIN
 			currentTouchPos = GetCurrentMousePos();
+#endif
 
 			/**
 			 * Abilities
@@ -83,27 +115,56 @@ public class BallistaController : MonoBehaviour {
 
 		}
 
+
+/* DISABLED WHEN RELEASED ON WINDOWS
+#if UNITY_STANDALONE_WIN
+
 		if (Input.GetMouseButtonUp(0)) {
 			isMouseDown = false;
 
-			/**
-			 * Abilities
-			 */
+			/// <summary>
+			/// Abilities
+			/// </summary>
 			if (hasTouchedAbilityArea) {
 
 			}
 
-			/**
-			 * Shooting
-			 */
+			/// <summary>
+			/// Shooting
+			/// </summary>
 			if (hasTouchedShootArea) {
 				ballista.Shoot(currentDrawLength / maxDrawLength);
 				EnableLengthPercentageText(false);
 			}
 
 		}
-	}
+#endif
+*/
 
+#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS
+		if (Input.touchCount > 0) {
+			if (Input.GetTouch(0).phase == TouchPhase.Ended) {
+				isMouseDown = false;
+
+				/**
+				 * Abilities
+				 */
+				if (hasTouchedAbilityArea) {
+
+				}
+
+				/**
+				 * Shooting
+				 */
+				if (hasTouchedShootArea) {
+					ballista.Shoot(currentDrawLength / maxDrawLength);
+					EnableLengthPercentageText(false);
+				}
+			}
+		}
+#endif
+	}
+	
 	bool IsOnShootTouchArea(Vector2 touchPos) {
 		if (RectTransformUtility.RectangleContainsScreenPoint(shootTouchArea.rectTransform, touchPos)) {
 			Debug.Log("Touched Shooting Area");
@@ -122,6 +183,14 @@ public class BallistaController : MonoBehaviour {
 
 	private Vector2 GetCurrentMousePos() {
 		return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+	}
+
+	private Vector2 GetCurrentTouchPos() {
+		if (Input.touchCount > 0) {
+			return Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+		}
+
+		return new Vector2(0f, 0f);
 	}
 
 	private void CalculateLength() {

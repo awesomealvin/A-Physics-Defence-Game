@@ -257,6 +257,10 @@ public class Cannon : MonoBehaviour {
 		return target.transform.position;
 	}
 
+	void SetAngleLimits() {
+		
+	}
+
 	Vector2 PrepareTargetPosition(string tag) {
 		SearchForTargets(tag);
 		selectedTarget = SelectRandomTarget();

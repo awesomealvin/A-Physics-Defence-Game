@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 50266824417701550}
   - component: {fileID: 58514262194012250}
   - component: {fileID: 114804930773898444}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bouncy Ball
   m_TagString: Player Projectile
   m_Icon: {fileID: 0}
