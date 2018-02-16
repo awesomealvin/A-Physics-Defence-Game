@@ -1,21 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Cannon : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject debugCircle;
 
+	[SerializeField]
+	private Text debugText;
+
 	public Transform targetPos;
 
-	[SerializeField] 
+	[SerializeField]
 	private float timeToActivate = 3f;
 	private float startTime;
 	private bool isDisabled = true;
 
+	// [State = Rotating]
 	private bool isRotating = false;
-	private bool hasReloaded = true;
+	// [State = Reloading]
+	private bool isReloading = false;
 	[SerializeField]
 	// The time (in seconds) it takes to reload a cannon ball after shooting
 	private float reloadSpeed = 2f;
@@ -23,8 +29,8 @@ public class Cannon : MonoBehaviour {
 	// The "stall" delay (in seconds). For pauses inbetween things such as shooting and rotating
 	private float stallTime = 0.75f;
 	//[HideInInspector]
-	// The boolean that controls the stalling
-	public bool isStalled = false;
+	// The boolean that controls the stalling [State = Stalling]
+	public bool isStalling = false;
 
 	[SerializeField]
 	private readonly float defaultForce = 20f;
@@ -49,6 +55,9 @@ public class Cannon : MonoBehaviour {
 	[SerializeField]
 	private Transform shootPoint;
 
+	// [State = Shooting]
+	private bool isShooting = false;
+
 	[SerializeField]
 	// All the cannonball prefabs
 	private GameObject[] cannonBallPrefabs;
@@ -69,7 +78,7 @@ public class Cannon : MonoBehaviour {
 		// Uses the ballista's method (because i'm lazy to recode) to convert the list in the
 		// inspector to the queue. Because queue's aren't available to be shown in the inspector :(
 		cannonBallQueue = Ballista.ListToGameObjectQueue<CannonBall.CannonBallType>(cannonBallListQueue, cannonBallPrefabs);
-		
+
 		if (isDisabled) {
 			StartCoroutine("Enable", timeToActivate);
 		}
@@ -78,6 +87,7 @@ public class Cannon : MonoBehaviour {
 	IEnumerator Enable() {
 		yield return new WaitForSeconds(timeToActivate);
 		isDisabled = false;
+		isRotating = true;
 	}
 
 	// Update is called once per frame
@@ -86,14 +96,56 @@ public class Cannon : MonoBehaviour {
 			return;
 		}
 
-		RotateBarrel();
-
-		// If it ain't rotating, has reloaded, and is not stalled, then it can shoot...
-		// Could put the statement in the shooting function, but could add other stuff in this
-		// section later on...
-		if (!isRotating && hasReloaded && !isStalled) {
-			Shoot(PrepareShot());
+		if (isRotating) {
+			SetDebugText("Rotating");
+			RotateBarrel();
 		}
+
+		if (isStalling) {
+			SetDebugText("Stalling");
+			Stall();
+		}
+
+		if (isShooting) {
+			SetDebugText("Shooting");
+			Shoot(PrepareShot());
+			PrepareTarget();
+		}
+
+		if (isReloading) {
+			SetDebugText("Reloading");
+			Reload();
+		}
+
+		// if (!isReloading) {
+		// 	RotateBarrel();
+		// }
+
+		// // If it ain't rotating, has reloaded, and is not stalled, then it can shoot...
+		// // Could put the statement in the shooting function, but could add other stuff in this
+		// // section later on...
+		// if (!isRotating && !isReloading && !isStalling) {
+		// 	Shoot(PrepareShot());
+		// 	PrepareTarget();
+		// }
+	}
+
+	void Stall() {
+		isStalling = false;
+		StartCoroutine("Continue");
+	}
+
+	void Reload() {
+		isReloading = false;
+		StartCoroutine("Reloading");
+	}
+
+	void PrepareTarget() {
+		SelectRandomTargetPosition(selectedTarget);
+
+		// Generates a new target rotation for the barrel
+		SetTargetRotation();
+
 	}
 
 	/// <summary>
@@ -164,19 +216,11 @@ public class Cannon : MonoBehaviour {
 			projectile.GetComponent<Rigidbody2D>().AddForce(barrel.right * force, ForceMode2D.Impulse);
 			//projectile.GetComponent<Rigidbody2D>().velocity = barrel.right*force;
 
+			// Sets shooting state to false
+			isShooting = false;
+
 			// Sets it so it can't shoot again unless reloaded
-			hasReloaded = false;
-			// Pauses the cannon for a bit by "stalling?" it
-			isStalled = true;
-
-			// Generates a new target rotation for the barrel
-			SetTargetRotation();
-			// Resets the isStalled boolean after a delay
-			StartCoroutine("Continue",stallTime);
-			// Resets the hasReloaded boolean so that it can shoot again
-			StartCoroutine("Reload");
-
-			SelectRandomTargetPosition(selectedTarget);
+			isReloading = true;
 		}
 	}
 
@@ -189,6 +233,9 @@ public class Cannon : MonoBehaviour {
 		// Randomize the angle
 		float angle = Random.Range(minAngle, maxAngle);
 
+		// Makes sure target angle is never lower that the target
+		//float differenceAngle = 
+
 		// Sets the target rotation by converting the euler angle
 		// Don't know why I need the 180f on the Y axis, but it works this way...
 		targetRotation = Quaternion.Euler(0f, 180f, angle);
@@ -200,10 +247,11 @@ public class Cannon : MonoBehaviour {
 	/// rotation has reached the target rotation or not.
 	/// </summary>
 	private void RotateBarrel() {
-		if (!isStalled) {
+		if (!isStalling) {
 			barrel.rotation = Quaternion.RotateTowards(barrel.rotation, targetRotation, Time.deltaTime * rotationSpeed);
 			if (barrel.rotation == targetRotation) {
 				isRotating = false;
+				isStalling = true;
 			} else {
 				isRotating = true;
 			}
@@ -213,9 +261,9 @@ public class Cannon : MonoBehaviour {
 	/// <summary>
 	/// Reloads the cannon after the defined time (reloadSpeed)
 	/// </summary>
-	IEnumerator Reload() {
+	IEnumerator Reloading() {
 		yield return new WaitForSeconds(reloadSpeed);
-		hasReloaded = true;
+		isRotating = true;
 	}
 
 	/// <summary>
@@ -224,7 +272,7 @@ public class Cannon : MonoBehaviour {
 	/// <param name="time">Time in seconds it takes to continue</param>
 	IEnumerator Continue() {
 		yield return new WaitForSeconds(stallTime);
-		isStalled = false;
+		isShooting = true;
 	}
 
 	void SearchForTargets(string tag) {
@@ -252,13 +300,13 @@ public class Cannon : MonoBehaviour {
 
 			Vector2 position = new Vector2(x, y);
 			return position;
-		} 
+		}
 
 		return target.transform.position;
 	}
 
-	void SetAngleLimits() {
-		
+	void SetAngleLimits(GameObject target) {
+
 	}
 
 	Vector2 PrepareTargetPosition(string tag) {
@@ -269,6 +317,13 @@ public class Cannon : MonoBehaviour {
 
 	private void DebugPosition(Vector2 position) {
 		Instantiate(debugCircle, position, Quaternion.identity);
+	}
+
+	void SetDebugText(string text) {
+		if (debugText != null) {
+			debugText.text = "Cannon is " + text;
+
+		}
 	}
 
 }

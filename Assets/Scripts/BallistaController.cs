@@ -66,7 +66,6 @@ public class BallistaController : MonoBehaviour {
 #endif
  */
 
-
 #if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS
 
 		if (Input.touchCount > 0) {
@@ -93,9 +92,9 @@ public class BallistaController : MonoBehaviour {
 			currentTouchPos = GetCurrentTouchPos();
 #endif
 
-#if UNITY_STANDALONE_WIN
-			currentTouchPos = GetCurrentMousePos();
-#endif
+// #if UNITY_STANDALONE_WIN
+// 			currentTouchPos = GetCurrentMousePos();
+// #endif
 
 			/**
 			 * Abilities
@@ -109,10 +108,9 @@ public class BallistaController : MonoBehaviour {
 			 */
 			if (hasTouchedShootArea) {
 				EnableLengthPercentageText(true);
-				ballista.Aim(initialTouchPos, currentTouchPos);
+				ballista.Aim(CalculateAngle(initialTouchPos, currentTouchPos));
 				CalculateLength();
 			}
-
 		}
 
 
@@ -163,6 +161,20 @@ public class BallistaController : MonoBehaviour {
 			}
 		}
 #endif
+	}
+
+	float CalculateAngle(Vector2 firstPos, Vector2 secondPos) {
+		// Gets the difference between the two points
+		Vector2 difference = firstPos - secondPos;
+
+		// Sets the initial click rotation
+		if (firstPos.Equals(secondPos)) {
+			difference = firstPos - (Vector2) ballista.flightGroove.transform.position;
+		}
+
+		// Calculates the angle from the two points
+		float angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+		return angle;
 	}
 	
 	bool IsOnShootTouchArea(Vector2 touchPos) {

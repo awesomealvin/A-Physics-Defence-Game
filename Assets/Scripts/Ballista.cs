@@ -5,7 +5,7 @@ using UnityEngine;
 public class Ballista : MonoBehaviour {
 
 	[SerializeField]
-	private Transform flightGroove;
+	public Transform flightGroove;
 	[SerializeField]
 	private Transform shootPoint;
 
@@ -58,6 +58,11 @@ public class Ballista : MonoBehaviour {
 		// Calculates the angle from the two points
 		float angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
 
+		// Applies rotation as Quaternion
+		flightGroove.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+	}
+
+	public void Aim(float angle) {
 		// Applies rotation as Quaternion
 		flightGroove.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 	}
