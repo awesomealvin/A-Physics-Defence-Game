@@ -48,7 +48,6 @@ public class BallistaController : MonoBehaviour {
 
 	void ManageTouches() {
 
-/* ENABLE WHEN RELEASED FOR WINDOWS
 #if UNITY_STANDALONE_WIN		
 		if (Input.GetMouseButtonDown(0)) {
 			// Checks if the shoot area has been touched
@@ -64,9 +63,8 @@ public class BallistaController : MonoBehaviour {
 			initialTouchPos = GetCurrentMousePos();
 		}
 #endif
- */
-
-#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS
+ 
+#if UNITY_ANDROID || UNITY_IOS
 
 		if (Input.touchCount > 0) {
 			Touch touch = Input.GetTouch(0);
@@ -88,13 +86,13 @@ public class BallistaController : MonoBehaviour {
 #endif
 
 		if (isMouseDown) {
-#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS
+#if UNITY_ANDROID || UNITY_IOS
 			currentTouchPos = GetCurrentTouchPos();
 #endif
 
-// #if UNITY_STANDALONE_WIN
-// 			currentTouchPos = GetCurrentMousePos();
-// #endif
+#if UNITY_STANDALONE_WIN
+			currentTouchPos = GetCurrentMousePos();
+#endif
 
 			/**
 			 * Abilities
@@ -114,7 +112,6 @@ public class BallistaController : MonoBehaviour {
 		}
 
 
-/* DISABLED WHEN RELEASED ON WINDOWS
 #if UNITY_STANDALONE_WIN
 
 		if (Input.GetMouseButtonUp(0)) {
@@ -137,9 +134,9 @@ public class BallistaController : MonoBehaviour {
 
 		}
 #endif
-*/
 
-#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS
+
+#if UNITY_ANDROID || UNITY_IOS
 		if (Input.touchCount > 0) {
 			if (Input.GetTouch(0).phase == TouchPhase.Ended) {
 				isMouseDown = false;
@@ -174,6 +171,7 @@ public class BallistaController : MonoBehaviour {
 
 		// Calculates the angle from the two points
 		float angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+		Debug.Log(angle);
 		return angle;
 	}
 	

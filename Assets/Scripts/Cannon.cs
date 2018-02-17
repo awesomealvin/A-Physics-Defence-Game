@@ -49,6 +49,8 @@ public class Cannon : MonoBehaviour {
 
 	private GameObject[] targets;
 	private GameObject selectedTarget;
+	// [State = Targeting]
+	private bool isTargeting = false;
 
 	[SerializeField]
 	private Transform barrel;
@@ -72,13 +74,14 @@ public class Cannon : MonoBehaviour {
 	// Use this for initialization
 	void Awake() {
 		previousRotation = barrel.rotation;
-		SetTargetRotation();
-		//targetRotation = barrel.rotation;
 
 		// Uses the ballista's method (because i'm lazy to recode) to convert the list in the
 		// inspector to the queue. Because queue's aren't available to be shown in the inspector :(
 		cannonBallQueue = Ballista.ListToGameObjectQueue<CannonBall.CannonBallType>(cannonBallListQueue, cannonBallPrefabs);
 
+	}
+
+	void Start() {
 		if (isDisabled) {
 			StartCoroutine("Enable", timeToActivate);
 		}
@@ -87,13 +90,18 @@ public class Cannon : MonoBehaviour {
 	IEnumerator Enable() {
 		yield return new WaitForSeconds(timeToActivate);
 		isDisabled = false;
-		isRotating = true;
+		isTargeting = true;
 	}
 
 	// Update is called once per frame
 	void Update() {
 		if (isDisabled) {
 			return;
+		}
+
+		if (isTargeting) {
+			SetDebugText("Targeting");
+			Target();
 		}
 
 		if (isRotating) {
@@ -109,7 +117,6 @@ public class Cannon : MonoBehaviour {
 		if (isShooting) {
 			SetDebugText("Shooting");
 			Shoot(PrepareShot());
-			PrepareTarget();
 		}
 
 		if (isReloading) {
@@ -130,6 +137,15 @@ public class Cannon : MonoBehaviour {
 		// }
 	}
 
+	void Target() {
+		isTargeting = false;
+		SearchForTargets("Block");
+		selectedTarget = SelectRandomTarget();
+		// Generates a new target rotation for the barrel
+		SetTargetRotation(selectedTarget);
+		isRotating = true;
+	}
+
 	void Stall() {
 		isStalling = false;
 		StartCoroutine("Continue");
@@ -140,14 +156,6 @@ public class Cannon : MonoBehaviour {
 		StartCoroutine("Reloading");
 	}
 
-	void PrepareTarget() {
-		SelectRandomTargetPosition(selectedTarget);
-
-		// Generates a new target rotation for the barrel
-		SetTargetRotation();
-
-	}
-
 	/// <summary>
 	/// Prepares the shot by calculating the force needed, and the target position
 	/// </summary>
@@ -156,7 +164,7 @@ public class Cannon : MonoBehaviour {
 		float force = defaultForce;
 		if (cannonBallQueue.Count > 0) {
 			Rigidbody2D nextCannonBallRb = cannonBallQueue.Peek().GetComponent<Rigidbody2D>();
-			Vector2 targetPosition = PrepareTargetPosition("Block");
+			Vector2 targetPosition = SelectRandomTargetPosition(selectedTarget);
 			force = CalculateForce(shootPoint.position, targetPosition, barrel.eulerAngles.z, nextCannonBallRb);
 		}
 		return force;
@@ -228,14 +236,48 @@ public class Cannon : MonoBehaviour {
 	///	Sets the target rotation by randomzing an angle 
 	/// between the max and min angles, then sets the targetRotation (Quaternion)
 	/// </summary>
-	private void SetTargetRotation() {
+	private void SetTargetRotation(GameObject target) {
 
 		// Randomize the angle
 		float angle = Random.Range(minAngle, maxAngle);
 
-		// Makes sure target angle is never lower that the target
-		//float differenceAngle = 
+		#region Prevents the randomized angle to be lower than the target
+		Vector2 targetPosition = target.transform.position;
+		Vector2 barrelPosition = barrel.position;
+		// Adds the offset for the shootpoint
+		barrelPosition.y += shootPoint.position.y;
+		/**
+		 * Adds the length of the target object to to target position's y
+		 * This makes it guarenteed that the angle of the barrel will
+		 * always be greater than the target.
+		 */
+		Collider2D collider = target.GetComponent<Collider2D>();
+		if (collider != null) {
+			Bounds bounds = collider.bounds;
+			Vector2 maxBounds = bounds.max;
+			Vector2 minBounds = bounds.min;
+			float length = Vector2.Distance(maxBounds, minBounds);
+			targetPosition.y += length;
+			DebugPosition(targetPosition);
+		}
+		/**
+		 * Makes sure target angle is never lower that the target
+		 */
+		// Gets the difference to find the angle
+		Vector2 difference = targetPosition - (Vector2) barrelPosition;
+		// Calculates the angle
+		float targetAngle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+		// Flips the angle if the cannon is also flipped
+		float flipOffset = transform.eulerAngles.y;
+		targetAngle = flipOffset - targetAngle;
 
+		/**
+		 * Sets it so the angle is never lower than the target
+		 * and is also never greater than straight up (90 deg)
+		 */
+		angle = (angle < targetAngle) ? targetAngle : angle;
+		angle = (angle > maxAngle) ? maxAngle : angle;
+		#endregion
 		// Sets the target rotation by converting the euler angle
 		// Don't know why I need the 180f on the Y axis, but it works this way...
 		targetRotation = Quaternion.Euler(0f, 180f, angle);
@@ -263,7 +305,7 @@ public class Cannon : MonoBehaviour {
 	/// </summary>
 	IEnumerator Reloading() {
 		yield return new WaitForSeconds(reloadSpeed);
-		isRotating = true;
+		isTargeting = true;
 	}
 
 	/// <summary>
@@ -288,6 +330,12 @@ public class Cannon : MonoBehaviour {
 		return target;
 	}
 
+	/// <summary>
+	/// Selects a position within a GameObject using the collider bounds
+	/// for the cannon to shoot at
+	/// </summary>
+	/// <param name="target"></param>
+	/// <returns>Vector2 position</returns>
 	Vector2 SelectRandomTargetPosition(GameObject target) {
 		Collider2D collider = target.GetComponent<Collider2D>();
 		if (collider != null) {
@@ -307,12 +355,6 @@ public class Cannon : MonoBehaviour {
 
 	void SetAngleLimits(GameObject target) {
 
-	}
-
-	Vector2 PrepareTargetPosition(string tag) {
-		SearchForTargets(tag);
-		selectedTarget = SelectRandomTarget();
-		return SelectRandomTargetPosition(selectedTarget);
 	}
 
 	private void DebugPosition(Vector2 position) {
