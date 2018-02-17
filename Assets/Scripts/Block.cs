@@ -85,7 +85,6 @@ public class Block : MonoBehaviour {
 		currentHealth -= damage;
 		if (debug) {
 			Debug.Log("Current Health = " + currentHealth);
-
 		}
 		if (currentHealth <= midHealthValue) {
 			spriteRenderer.color = midHealthColor;
