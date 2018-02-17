@@ -141,6 +141,11 @@ public class Cannon : MonoBehaviour {
 		isTargeting = false;
 		SearchForTargets("Block");
 		selectedTarget = SelectRandomTarget();
+		// If there's no more targets available, then disable the cannon...
+		if (selectedTarget == null) {
+			isDisabled = true;
+			return;
+		}
 		// Generates a new target rotation for the barrel
 		SetTargetRotation(selectedTarget);
 		isRotating = true;

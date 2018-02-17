@@ -4,6 +4,9 @@ using UnityEngine;
 
 public abstract class EnemyProjectile : MonoBehaviour {
 
+	[SerializeField]
+	public int maxDamage;
+
 	protected virtual void ContactWithPlayerProjectile() {
 		Destroy(gameObject);
 	}

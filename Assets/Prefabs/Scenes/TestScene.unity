@@ -706,6 +706,10 @@ Prefab:
       propertyPath: m_TagString
       value: Block
       objectReference: {fileID: 0}
+    - target: {fileID: 1933837543848188, guid: 76598e69b9b264f4d877df2fec5e2100, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 76598e69b9b264f4d877df2fec5e2100, type: 2}
   m_IsPrefabParent: 0
@@ -1283,6 +1287,10 @@ Prefab:
       propertyPath: m_TagString
       value: Block
       objectReference: {fileID: 0}
+    - target: {fileID: 1933837543848188, guid: 76598e69b9b264f4d877df2fec5e2100, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 76598e69b9b264f4d877df2fec5e2100, type: 2}
   m_IsPrefabParent: 0
@@ -1438,6 +1446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2c7493c9d843ef4a87f24cbbdd407f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxDamage: 0
 --- !u!1001 &1964163118
 Prefab:
   m_ObjectHideFlags: 0
@@ -1480,6 +1489,11 @@ Prefab:
     - target: {fileID: 1933837543848188, guid: 76598e69b9b264f4d877df2fec5e2100, type: 2}
       propertyPath: m_TagString
       value: Block
+      objectReference: {fileID: 0}
+    - target: {fileID: 114904684670442162, guid: 76598e69b9b264f4d877df2fec5e2100,
+        type: 2}
+      propertyPath: debug
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 76598e69b9b264f4d877df2fec5e2100, type: 2}
