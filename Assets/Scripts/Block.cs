@@ -26,14 +26,9 @@ public class Block : MonoBehaviour {
 	private float maxProjectileVelocityDamageTolerance = 15f;
 
 	[SerializeField]
-	private float minPlatformVelocityDamageTolerance = 5f;
+	private float minEnvironmentVelocityDamageTolerance = 6f;
 	[SerializeField]
-	private float maxPlatformVelocityDamageTolerance = 40f;
-
-	[SerializeField]
-	private float minBlockVelocityDamageTolerance = 3f;
-	[SerializeField]
-	private float maxBlockVelocityDamageTolerance = 40f;
+	private float maxEnvironmentVelocityDamageTolerance = 50f;
 
 	void Awake() {
 		blockDamage = maxHealth;
@@ -53,13 +48,13 @@ public class Block : MonoBehaviour {
 			int damage = other.gameObject.GetComponent<EnemyProjectile>().maxDamage;
 			float percentage = CalculateDamagePercentage(minProjectileVelocityDamageTolerance,
 				maxProjectileVelocityDamageTolerance, velocity);
-
 			Damage(CalculateDamageFromPercentage(damage, percentage));
-		} else if (other.gameObject.CompareTag("Block")) {
-
-		} else if (other.gameObject.CompareTag("Platform")) {
-
-		}
+		} else if (other.gameObject.CompareTag("Block")|| 
+			other.gameObject.CompareTag("Platform")) {
+			float percentage = CalculateDamagePercentage(minEnvironmentVelocityDamageTolerance,
+				maxEnvironmentVelocityDamageTolerance, velocity);
+			Damage(CalculateDamageFromPercentage(blockDamage, percentage));
+		} 
 	}
 
 	int CalculateDamageFromPercentage(int damage, float percentage) {

@@ -135,10 +135,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 212759164688246644}
   minProjectileVelocityDamageTolerance: 6
   maxProjectileVelocityDamageTolerance: 15
-  minPlatformVelocityDamageTolerance: 5
-  maxPlatformVelocityDamageTolerance: 40
-  minBlockVelocityDamageTolerance: 3
-  maxBlockVelocityDamageTolerance: 40
+  minEnvironmentVelocityDamageTolerance: 6
+  maxEnvironmentVelocityDamageTolerance: 50
 --- !u!212 &212759164688246644
 SpriteRenderer:
   m_ObjectHideFlags: 1

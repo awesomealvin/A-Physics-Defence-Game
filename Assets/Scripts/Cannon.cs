@@ -116,7 +116,9 @@ public class Cannon : MonoBehaviour {
 
 		if (isShooting) {
 			SetDebugText("Shooting");
-			Shoot(PrepareShot());
+			if (selectedTarget != null) {
+				Shoot(PrepareShot());
+			}
 		}
 
 		if (isReloading) {
@@ -263,7 +265,6 @@ public class Cannon : MonoBehaviour {
 			Vector2 minBounds = bounds.min;
 			float length = Vector2.Distance(maxBounds, minBounds);
 			targetPosition.y += length;
-			DebugPosition(targetPosition);
 		}
 		/**
 		 * Makes sure target angle is never lower that the target
@@ -369,7 +370,6 @@ public class Cannon : MonoBehaviour {
 	void SetDebugText(string text) {
 		if (debugText != null) {
 			debugText.text = "Cannon is " + text;
-
 		}
 	}
 
