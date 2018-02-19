@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class StandardCannonBall : CannonBall {
 
-	 override protected void ContactWithPlayerProjectile() {
-		Debug.Log("Test");
-	}
+	//  override protected void ContactWithPlayerProjectile() {
+	// 	Debug.Log("Test");
+	// }
 
 }
