@@ -18,13 +18,13 @@ public class BallistaController : MonoBehaviour {
 	private Ballista ballista;
 
 	[SerializeField]
-	private float maxDrawLength = 5f;
-	private float currentDrawLength;
+	public float maxDrawLength = 5f;
+	public float currentDrawLength;
 
 	[SerializeField]
 	private Text lengthPercentageText;
 
-	private bool isMouseDown;
+	public bool isMouseDown;
 
 	private Vector2 initialTouchPos;
 	private Vector2 currentTouchPos;
@@ -171,7 +171,7 @@ public class BallistaController : MonoBehaviour {
 
 		// Calculates the angle from the two points
 		float angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
-		Debug.Log(angle);
+//		Debug.Log(angle);
 		return angle;
 	}
 	

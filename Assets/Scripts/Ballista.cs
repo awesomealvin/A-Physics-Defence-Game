@@ -7,10 +7,11 @@ public class Ballista : MonoBehaviour {
 	[SerializeField]
 	public Transform flightGroove;
 	[SerializeField]
-	private Transform shootPoint;
+	public Transform shootPoint;
 
 	[SerializeField]
-	private float maxShootForce = 40f;
+	public float maxShootForce = 40f;
+	public float currentForce = 0f;
 	[SerializeField]
 	private GameObject[] arrowPrefabs;
 	[SerializeField]
@@ -25,12 +26,14 @@ public class Ballista : MonoBehaviour {
 	[SerializeField]
 	private List<ArrowType> arrowQueueList;
 	private Queue<GameObject> arrowQueue;
+	public GameObject nextProjectile;
 
 	private Rigidbody2D rb;
 
 	void Start() {
 		rb = GetComponent<Rigidbody2D>();
 		arrowQueue = ListToGameObjectQueue<ArrowType>(arrowQueueList, arrowPrefabs);
+		nextProjectile = arrowQueue.Peek();
 	}
 
 	/**
@@ -82,6 +85,7 @@ public class Ballista : MonoBehaviour {
 			} else {
 				nextArrow = arrowQueue.Dequeue();
 			}
+			nextProjectile = nextArrow;
 
 			// Instantiates the arrow
 			GameObject projectile = Instantiate(nextArrow, shootPoint.position, Quaternion.identity);

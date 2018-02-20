@@ -45,7 +45,7 @@ public class Block : MonoBehaviour {
 		// }
 		Vector2 velocity = other.relativeVelocity;
 		if (other.gameObject.CompareTag("Enemy Projectile")) {
-			int damage = other.gameObject.GetComponent<EnemyProjectile>().maxDamage;
+			int damage = other.gameObject.GetComponent<EnemyProjectile>().GetDamage();
 			float percentage = CalculateDamagePercentage(minProjectileVelocityDamageTolerance,
 				maxProjectileVelocityDamageTolerance, velocity);
 			Damage(CalculateDamageFromPercentage(damage, percentage));
