@@ -8,6 +8,7 @@ TagManager:
   - Player Projectile
   - Enemy Projectile
   - Block
+  - Game Manager
   layers:
   - Default
   - TransparentFX

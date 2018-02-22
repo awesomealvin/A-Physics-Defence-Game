@@ -128,8 +128,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bc8809172aca3847940b8e978fa0f49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  points: 1000
+  gameManager: {fileID: 0}
   debug: 0
   maxHealth: 100
+  highHealthColor: {r: 1, g: 0.97241366, b: 0, a: 0}
   midHealthColor: {r: 1, g: 0.68275857, b: 0, a: 0}
   lowHealthColor: {r: 1, g: 0, b: 0, a: 0}
   spriteRenderer: {fileID: 212759164688246644}

@@ -207,8 +207,8 @@ public class BallistaController : MonoBehaviour {
 		currentDrawLength = (currentTouchPos - initialTouchPos).magnitude;
 		currentDrawLength = (currentDrawLength > maxDrawLength) ? maxDrawLength : currentDrawLength;
 		float percentage = currentDrawLength / maxDrawLength;
-
-		lengthPercentageText.text = (percentage * 100f) + "%";
+		
+		lengthPercentageText.text = (percentage * 100f).ToString("F0") + "%";
 	}
 
 	private void EnableLengthPercentageText(bool value) {

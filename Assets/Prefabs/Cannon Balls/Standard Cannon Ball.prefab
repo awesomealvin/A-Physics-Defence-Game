@@ -89,7 +89,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2c7493c9d843ef4a87f24cbbdd407f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDamageMultiplier: 10
+  maxPoints: 500
+  minPoints: 100
+  startPosition: {x: 0, y: 0}
+  targetPosition: {x: 0, y: 0}
+  minPointsDistancePercentage: 0.1
 --- !u!212 &212340646551301476
 SpriteRenderer:
   m_ObjectHideFlags: 1

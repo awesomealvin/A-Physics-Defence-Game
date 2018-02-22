@@ -49,6 +49,7 @@ public class Cannon : MonoBehaviour {
 
 	private GameObject[] targets;
 	private GameObject selectedTarget;
+	private Vector2 selectedTargetPosition;
 	// [State = Targeting]
 	private bool isTargeting = false;
 
@@ -116,9 +117,7 @@ public class Cannon : MonoBehaviour {
 
 		if (isShooting) {
 			SetDebugText("Shooting");
-			if (selectedTarget != null) {
-				Shoot(PrepareShot());
-			}
+			Shoot(PrepareShot());
 		}
 
 		if (isReloading) {
@@ -150,6 +149,7 @@ public class Cannon : MonoBehaviour {
 		}
 		// Generates a new target rotation for the barrel
 		SetTargetRotation(selectedTarget);
+		selectedTargetPosition = SelectRandomTargetPosition(selectedTarget);
 		isRotating = true;
 	}
 
@@ -171,8 +171,7 @@ public class Cannon : MonoBehaviour {
 		float force = defaultForce;
 		if (cannonBallQueue.Count > 0) {
 			Rigidbody2D nextCannonBallRb = cannonBallQueue.Peek().GetComponent<Rigidbody2D>();
-			Vector2 targetPosition = SelectRandomTargetPosition(selectedTarget);
-			force = CalculateForce(shootPoint.position, targetPosition, barrel.eulerAngles.z, nextCannonBallRb);
+			force = CalculateForce(shootPoint.position, selectedTargetPosition, barrel.eulerAngles.z, nextCannonBallRb);
 		}
 		return force;
 	}
@@ -230,6 +229,10 @@ public class Cannon : MonoBehaviour {
 			GameObject projectile = Instantiate(nextCannonBall, shootPoint.position, Quaternion.identity);
 			projectile.GetComponent<Rigidbody2D>().AddForce(barrel.right * force, ForceMode2D.Impulse);
 			//projectile.GetComponent<Rigidbody2D>().velocity = barrel.right*force;
+
+			// Sets the start and target position for the projectile scoring system
+			EnemyProjectile enemyProjectile = projectile.GetComponent<EnemyProjectile>();
+			enemyProjectile.SetScoringPositions(shootPoint.position, selectedTargetPosition);
 
 			// Sets shooting state to false
 			isShooting = false;

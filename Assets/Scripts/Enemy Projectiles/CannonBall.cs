@@ -33,7 +33,6 @@ public abstract class CannonBall : EnemyProjectile {
 
     void Update() {
         FadeToDestroy();
-
     }
 
     void FixedUpdate() {

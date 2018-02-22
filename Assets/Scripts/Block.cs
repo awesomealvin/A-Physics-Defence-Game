@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Block : MonoBehaviour {
 
+	public int points = 1000;
+	[SerializeField]
+	private GameManager gameManager;
+
 	public bool debug = false;
 
 	private int blockDamage;
@@ -11,6 +15,9 @@ public class Block : MonoBehaviour {
 	[SerializeField]
 	private int maxHealth = 100;
 	private int currentHealth;
+	[SerializeField]
+	private Color highHealthColor;
+	private readonly int highHealthValue = 75;
 	[SerializeField]
 	private Color midHealthColor;
 	private readonly int midHealthValue = 50;
@@ -21,12 +28,12 @@ public class Block : MonoBehaviour {
 	private SpriteRenderer spriteRenderer;
 
 	[SerializeField]
-	private float minProjectileVelocityDamageTolerance = 6f;
+	private float minProjectileVelocityDamageTolerance = 3f;
 	[SerializeField]
 	private float maxProjectileVelocityDamageTolerance = 15f;
 
 	[SerializeField]
-	private float minEnvironmentVelocityDamageTolerance = 6f;
+	private float minEnvironmentVelocityDamageTolerance = 3f;
 	[SerializeField]
 	private float maxEnvironmentVelocityDamageTolerance = 50f;
 
@@ -34,7 +41,10 @@ public class Block : MonoBehaviour {
 		blockDamage = maxHealth;
 		currentHealth = maxHealth;
 
+		gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
+
 		// Fixes the issue where the colors are transparent
+		highHealthColor.a = 1f;
 		midHealthColor.a = 1f;
 		lowHealthColor.a = 1f;
 	}
@@ -49,12 +59,12 @@ public class Block : MonoBehaviour {
 			float percentage = CalculateDamagePercentage(minProjectileVelocityDamageTolerance,
 				maxProjectileVelocityDamageTolerance, velocity);
 			Damage(CalculateDamageFromPercentage(damage, percentage));
-		} else if (other.gameObject.CompareTag("Block")|| 
+		} else if (other.gameObject.CompareTag("Block") ||
 			other.gameObject.CompareTag("Platform")) {
 			float percentage = CalculateDamagePercentage(minEnvironmentVelocityDamageTolerance,
 				maxEnvironmentVelocityDamageTolerance, velocity);
 			Damage(CalculateDamageFromPercentage(blockDamage, percentage));
-		} 
+		}
 	}
 
 	int CalculateDamageFromPercentage(int damage, float percentage) {
@@ -77,20 +87,31 @@ public class Block : MonoBehaviour {
 	}
 
 	void Damage(int damage) {
+		if (damage <= 0) {
+			return;
+		}
 		currentHealth -= damage;
 		if (debug) {
 			Debug.Log("Current Health = " + currentHealth);
 		}
-		if (currentHealth <= midHealthValue) {
-			spriteRenderer.color = midHealthColor;
-		}
 
 		if (currentHealth <= lowHealthValue) {
 			spriteRenderer.color = lowHealthColor;
+		} else if (currentHealth <= midHealthValue) {
+			spriteRenderer.color = midHealthColor;
+		} else if (currentHealth <= highHealthValue) {
+			spriteRenderer.color = highHealthColor;
 		}
 
 		if (currentHealth <= 0) {
-			Destroy(gameObject);
+			DestroyBlock();
+		 }
+	}
+
+	void DestroyBlock() {
+		Destroy(gameObject);
+		if (gameManager != null) {
+			gameManager.DeductPoints(points);
 		}
 	}
 }
