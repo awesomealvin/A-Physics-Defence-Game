@@ -80,7 +80,7 @@ public class Block : MonoBehaviour {
 			float totalTolerance = maxVelocityTolerance - minVelocityTolerance;
 			float percentage = magnitude / totalTolerance;
 			percentage = (percentage > 1f) ? 1f : percentage;
-			Debug.Log(percentage);
+//			Debug.Log(percentage);
 
 			return percentage;
 		}

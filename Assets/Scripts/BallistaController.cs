@@ -63,7 +63,7 @@ public class BallistaController : MonoBehaviour {
 			initialTouchPos = GetCurrentMousePos();
 		}
 #endif
- 
+
 #if UNITY_ANDROID || UNITY_IOS
 
 		if (Input.touchCount > 0) {
@@ -111,7 +111,6 @@ public class BallistaController : MonoBehaviour {
 			}
 		}
 
-
 #if UNITY_STANDALONE_WIN
 
 		if (Input.GetMouseButtonUp(0)) {
@@ -134,7 +133,6 @@ public class BallistaController : MonoBehaviour {
 
 		}
 #endif
-
 
 #if UNITY_ANDROID || UNITY_IOS
 		if (Input.touchCount > 0) {
@@ -171,10 +169,10 @@ public class BallistaController : MonoBehaviour {
 
 		// Calculates the angle from the two points
 		float angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
-//		Debug.Log(angle);
+		//		Debug.Log(angle);
 		return angle;
 	}
-	
+
 	bool IsOnShootTouchArea(Vector2 touchPos) {
 		if (RectTransformUtility.RectangleContainsScreenPoint(shootTouchArea.rectTransform, touchPos)) {
 			Debug.Log("Touched Shooting Area");
@@ -204,14 +202,20 @@ public class BallistaController : MonoBehaviour {
 	}
 
 	private void CalculateLength() {
+
 		currentDrawLength = (currentTouchPos - initialTouchPos).magnitude;
 		currentDrawLength = (currentDrawLength > maxDrawLength) ? maxDrawLength : currentDrawLength;
 		float percentage = currentDrawLength / maxDrawLength;
-		
-		lengthPercentageText.text = (percentage * 100f).ToString("F0") + "%";
+
+		if (lengthPercentageText != null) {
+			lengthPercentageText.text = (percentage * 100f).ToString("F0") + "%";
+		}
 	}
 
 	private void EnableLengthPercentageText(bool value) {
+		if (lengthPercentageText == null) {
+			return;
+		}
 		if (lengthPercentageText != null) {
 			lengthPercentageText.enabled = value;
 		}

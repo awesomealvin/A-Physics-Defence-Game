@@ -69,6 +69,11 @@ public class Cannon : MonoBehaviour {
 	private List<CannonBall.CannonBallType> cannonBallListQueue;
 	private Queue<GameObject> cannonBallQueue;
 
+	[SerializeField]
+	private Text ammoCountText;
+	private int maxAmmoCount;
+	private int currentAmmoCount;
+
 	// Used to check if the cannon is currently rotating
 	Quaternion previousRotation;
 
@@ -83,6 +88,8 @@ public class Cannon : MonoBehaviour {
 	}
 
 	void Start() {
+		maxAmmoCount = cannonBallQueue.Count;
+		UpdateAmmoTextCount();
 		if (isDisabled) {
 			StartCoroutine("Enable", timeToActivate);
 		}
@@ -239,6 +246,9 @@ public class Cannon : MonoBehaviour {
 
 			// Sets it so it can't shoot again unless reloaded
 			isReloading = true;
+
+			// Update Ammo Count Text
+			UpdateAmmoTextCount();
 		}
 	}
 
@@ -362,8 +372,12 @@ public class Cannon : MonoBehaviour {
 		return target.transform.position;
 	}
 
-	void SetAngleLimits(GameObject target) {
 
+	private void UpdateAmmoTextCount() {
+		currentAmmoCount = cannonBallQueue.Count;
+		if (ammoCountText != null) {
+			ammoCountText.text = currentAmmoCount+"/"+maxAmmoCount;
+		}
 	}
 
 	private void DebugPosition(Vector2 position) {

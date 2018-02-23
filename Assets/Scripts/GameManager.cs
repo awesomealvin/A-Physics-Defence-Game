@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour {
 	[SerializeField]
 	private Text scoreText;
 
+	[SerializeField]
+	private Text versionText;
+
 	public void RestartCurrentLevel() {
 		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
@@ -18,6 +21,7 @@ public class GameManager : MonoBehaviour {
 	void Start() {
 		totalPoints = 0;
 		TotalBlockPoints();
+		UpdateVersionText();
 	}
 
 	public void AddPoints(int points) {
@@ -48,6 +52,12 @@ public class GameManager : MonoBehaviour {
 			return;
 		}
 		scoreText.text = "Score: " + newScore;
+	}
+
+	private void UpdateVersionText() {
+		if (versionText != null) {
+			versionText.text = Application.version;
+		}
 	}
 
 	

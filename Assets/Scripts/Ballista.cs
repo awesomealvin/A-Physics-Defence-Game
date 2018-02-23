@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ballista : MonoBehaviour {
 
@@ -16,6 +17,11 @@ public class Ballista : MonoBehaviour {
 	private GameObject[] arrowPrefabs;
 	[SerializeField]
 	private bool unlimitedAmmo = false;
+
+	[SerializeField]
+	private Text ammoCountText;
+	private int currentAmmoCount;
+	private int maxAmmoCount;
 
 	private bool isAiming;
 
@@ -34,6 +40,16 @@ public class Ballista : MonoBehaviour {
 		rb = GetComponent<Rigidbody2D>();
 		arrowQueue = ListToGameObjectQueue<ArrowType>(arrowQueueList, arrowPrefabs);
 		nextProjectile = arrowQueue.Peek();
+		maxAmmoCount = arrowQueue.Count;
+		currentAmmoCount = maxAmmoCount;
+		UpdateAmmoCountText();
+	}
+
+	private void UpdateAmmoCountText() {
+		currentAmmoCount = arrowQueue.Count;
+		if (ammoCountText != null) {
+			ammoCountText.text = currentAmmoCount + "/" + maxAmmoCount;
+		}
 	}
 
 	/**
@@ -94,6 +110,9 @@ public class Ballista : MonoBehaviour {
 			// Adds the force to the instantiated projectile
 			projectile.GetComponent<Rigidbody2D>().AddForce(flightGroove.right * force, ForceMode2D.Impulse);
 			SetLastBall(projectile);
+
+			// Decrease ammo count text
+			UpdateAmmoCountText();
 
 		} else {
 			Debug.Log("No more arrows!");
