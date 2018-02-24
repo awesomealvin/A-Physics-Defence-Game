@@ -25,7 +25,7 @@ public class Ballista : MonoBehaviour {
 
 	private bool isAiming;
 
-	private Ball lastBall;
+	public Ball lastBall;
 
 	// Arrow Queue to be converted to an actaul queue.
 	// Is a list because it can be serialized
@@ -120,11 +120,11 @@ public class Ballista : MonoBehaviour {
 
 	}
 
-	public void UseLastBallAbility() {
-		if (lastBall != null) {
-			lastBall.UseAbility();
-		}
-	}
+	// public void UseLastBallAbility() {
+	// 	if (lastBall != null) {
+	// 		lastBall.UseAbility();
+	// 	}
+	// }
 
 	void SetLastBall(GameObject ball) {
 		lastBall = ball.GetComponent<Ball>();

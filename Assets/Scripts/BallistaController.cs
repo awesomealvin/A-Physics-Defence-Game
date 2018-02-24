@@ -56,7 +56,9 @@ public class BallistaController : MonoBehaviour {
 			hasTouchedAbilityArea = IsOnAbilityTouchArea(GetCurrentMousePos());
 
 			if (hasTouchedAbilityArea) {
-				ballista.UseLastBallAbility();
+				if (ballista.lastBall != null) {
+					ballista.lastBall.UseAbilityOnTouch();
+				}
 			}
 
 			isMouseDown = true;
@@ -75,7 +77,9 @@ public class BallistaController : MonoBehaviour {
 				hasTouchedAbilityArea = IsOnAbilityTouchArea(GetCurrentTouchPos());
 
 				if (hasTouchedAbilityArea) {
-					ballista.UseLastBallAbility();
+					if (ballista.lastBall != null) {
+						ballista.lastBall.UseAbilityOnTouch();
+					}
 				}
 
 				isMouseDown = true;
@@ -98,7 +102,9 @@ public class BallistaController : MonoBehaviour {
 			 * Abilities
 			 */
 			if (hasTouchedAbilityArea) {
-
+				if (ballista.lastBall != null) {
+					ballista.lastBall.UseAbilityOnHold();
+				}
 			}
 
 			/**
@@ -120,7 +126,9 @@ public class BallistaController : MonoBehaviour {
 			/// Abilities
 			/// </summary>
 			if (hasTouchedAbilityArea) {
-
+				if (ballista.lastBall != null) {
+					ballista.lastBall.UseAbilityOnRelease();
+				}
 			}
 
 			/// <summary>
@@ -143,7 +151,9 @@ public class BallistaController : MonoBehaviour {
 				 * Abilities
 				 */
 				if (hasTouchedAbilityArea) {
-
+					if (ballista.lastBall != null) {
+						ballista.lastBall.UseAbilityOnRelease();
+					}
 				}
 
 				/**

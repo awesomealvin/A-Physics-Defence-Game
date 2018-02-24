@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class Ball : PlayerProjectile {
 
-	public abstract void UseAbility();
+	public abstract void UseAbilityOnTouch();
+	public abstract void UseAbilityOnHold();
+	public abstract void UseAbilityOnRelease();
 
 }

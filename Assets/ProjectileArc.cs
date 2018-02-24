@@ -6,8 +6,12 @@ using UnityEngine;
 [RequireComponent(typeof(BallistaController))]
 public class ProjectileArc : MonoBehaviour {
 
+	
+	[SerializeField]
+	private float length;
+	[SerializeField]
 	private float spacing = 0.75f;
-	private int amount = 50;
+	private int amount;
 
 	[SerializeField]
 	GameObject projectileArcPointPrefab;
@@ -19,20 +23,21 @@ public class ProjectileArc : MonoBehaviour {
 	BallistaController ballistaController;
 
 	void Awake() {
+		amount = Mathf.RoundToInt(length / spacing);
 		projectileArcPoints = new GameObject[amount];
 		for (int i = 0; i < projectileArcPoints.Length; i++) {
-			GameObject g = Instantiate(projectileArcPointPrefab, ballista.shootPoint.position, Quaternion.identity);
+			GameObject g = Instantiate(projectileArcPointPrefab, ballista.shootPoint.position, Quaternion.identity, gameObject.transform);
 			projectileArcPoints[i] = g;
 		}
 	}
 
-	void LateUpdate() {
+	void Update() {
 		if (ballistaController.isMouseDown) {
 			UpdateProjectileArc();
 		}
 	}
 
-	void UpdateProjectileArc() {
+	public void UpdateProjectileArc() {
 		float currentSpacing = spacing;
 
 		float gravity = Physics2D.gravity.magnitude;
@@ -55,7 +60,7 @@ public class ProjectileArc : MonoBehaviour {
 
 			float y = (velocity * time * Mathf.Sin(radians)) - ((gravity * time * time) / 2f);
 
-			p.transform.localPosition = new Vector3(x, y, 0f) + ballista.shootPoint.position;
+			p.transform.position = new Vector3(x, y, 0f) + ballista.shootPoint.position;
 			currentSpacing += spacing;
 		}
 	}
