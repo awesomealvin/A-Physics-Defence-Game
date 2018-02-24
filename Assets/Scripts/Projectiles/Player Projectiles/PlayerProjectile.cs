@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Ball : MonoBehaviour {
-
+public class PlayerProjectile : Projectile {
 	private GameManager gameManager;
 
 	void Awake() {
 		gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
 	}
-
-	public abstract void UseAbility();
-
+	
 	void OnCollisionEnter2D(Collision2D other) {
 		if (other.gameObject.CompareTag("Enemy Projectile")) {
 			if (gameManager != null) {

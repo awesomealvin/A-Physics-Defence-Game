@@ -26,8 +26,7 @@ public class ProjectileArc : MonoBehaviour {
 		}
 	}
 
-	// Update is called once per frame
-	void Update() {
+	void LateUpdate() {
 		if (ballistaController.isMouseDown) {
 			UpdateProjectileArc();
 		}
