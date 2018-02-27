@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class BallistaController : MonoBehaviour {
 
 	[SerializeField]
+	LineRenderer lineRenderer;
+
+	[SerializeField]
 	private RawImage shootTouchArea;
 	bool hasTouchedShootArea = false;
 
@@ -67,6 +70,8 @@ public class BallistaController : MonoBehaviour {
 
 			isMouseDown = true;
 			initialTouchPos = GetCurrentMousePos();
+			EnableLine(true);
+
 		}
 #endif
 
@@ -88,6 +93,7 @@ public class BallistaController : MonoBehaviour {
 
 				isMouseDown = true;
 				initialTouchPos = GetCurrentTouchPos();
+				EnableLine(true);
 			}
 		}
 
@@ -122,6 +128,8 @@ public class BallistaController : MonoBehaviour {
 				// CalculateLength();
 				PrepareProjectileArc();
 			}
+
+			DrawLine();
 		}
 
 #if UNITY_STANDALONE_WIN
@@ -170,6 +178,9 @@ public class BallistaController : MonoBehaviour {
 					ballista.Shoot(currentForcePercentage);
 					EnableLengthPercentageText(false);
 				}
+
+				EnableLine(false);
+
 			}
 		}
 #endif
@@ -183,7 +194,7 @@ public class BallistaController : MonoBehaviour {
 			float velocity = currentForcePercentage * ballista.maxShootForce;
 
 			projectileArc.UpdateProjectileArc(rb, ballista.shootPoint.position,
-			ballista.flightGroove.eulerAngles.z, velocity);
+				ballista.flightGroove.eulerAngles.z, velocity);
 		}
 	}
 
@@ -238,4 +249,12 @@ public class BallistaController : MonoBehaviour {
 		}
 	}
 
+	private void DrawLine() {
+		lineRenderer.SetPosition(0, initialTouchPos);
+		lineRenderer.SetPosition(1, currentTouchPos);
+	}
+
+	private void EnableLine(bool enabled) {
+		lineRenderer.enabled = enabled;
+	}
 }
