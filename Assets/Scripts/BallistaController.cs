@@ -20,6 +20,7 @@ public class BallistaController : MonoBehaviour {
 	[SerializeField]
 	public float maxDrawLength = 5f;
 	public float currentDrawLength;
+	private float currentForcePercentage;
 
 	[SerializeField]
 	private Text lengthPercentageText;
@@ -28,6 +29,9 @@ public class BallistaController : MonoBehaviour {
 
 	private Vector2 initialTouchPos;
 	private Vector2 currentTouchPos;
+
+	[SerializeField]
+	private ProjectileArc projectileArc;
 
 	// Use this for initialization
 	void Start() {
@@ -104,6 +108,7 @@ public class BallistaController : MonoBehaviour {
 			if (hasTouchedAbilityArea) {
 				if (ballista.lastBall != null) {
 					ballista.lastBall.UseAbilityOnHold(GetCurrentTouchPos());
+
 				}
 			}
 
@@ -112,8 +117,10 @@ public class BallistaController : MonoBehaviour {
 			 */
 			if (hasTouchedShootArea) {
 				EnableLengthPercentageText(true);
-				ballista.Aim(CalculateAngle(initialTouchPos, currentTouchPos, ballista.flightGroove.transform.position));
-				CalculateLength();
+				currentForcePercentage = MyCalculator.CalcuateForcePercentage(initialTouchPos, currentTouchPos, maxDrawLength);
+				ballista.Aim(MyCalculator.CalculateAngle(initialTouchPos, currentTouchPos, ballista.flightGroove.transform.position));
+				// CalculateLength();
+				PrepareProjectileArc();
 			}
 		}
 
@@ -160,7 +167,7 @@ public class BallistaController : MonoBehaviour {
 				 * Shooting
 				 */
 				if (hasTouchedShootArea) {
-					ballista.Shoot(currentDrawLength / maxDrawLength);
+					ballista.Shoot(currentForcePercentage);
 					EnableLengthPercentageText(false);
 				}
 			}
@@ -168,19 +175,16 @@ public class BallistaController : MonoBehaviour {
 #endif
 	}
 
-	public static float CalculateAngle(Vector2 firstPos, Vector2 secondPos, Vector2 position) {
-		// Gets the difference between the two points
-		Vector2 difference = firstPos - secondPos;
+	private void PrepareProjectileArc() {
+		if (projectileArc != null) {
+			// Last ball's rigidbody
+			Rigidbody2D rb = ballista.nextProjectile.GetComponent<Rigidbody2D>();
+			// float velocity = (currentDrawLength / maxDrawLength) * ballista.maxShootForce;
+			float velocity = currentForcePercentage * ballista.maxShootForce;
 
-		// Sets the initial click rotation
-		if (firstPos.Equals(secondPos)) {
-			difference = firstPos - (Vector2) position;
+			projectileArc.UpdateProjectileArc(rb, ballista.shootPoint.position,
+			ballista.flightGroove.eulerAngles.z, velocity);
 		}
-
-		// Calculates the angle from the two points
-		float angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
-		//		Debug.Log(angle);
-		return angle;
 	}
 
 	bool IsOnShootTouchArea(Vector2 touchPos) {
@@ -211,10 +215,13 @@ public class BallistaController : MonoBehaviour {
 		return new Vector2(0f, 0f);
 	}
 
+	// Currently Obsolete as MyCalculator class calculates current percentage length
+	// May keep due to the percentage text
 	private void CalculateLength() {
 
 		currentDrawLength = (currentTouchPos - initialTouchPos).magnitude;
 		currentDrawLength = (currentDrawLength > maxDrawLength) ? maxDrawLength : currentDrawLength;
+
 		float percentage = currentDrawLength / maxDrawLength;
 
 		if (lengthPercentageText != null) {

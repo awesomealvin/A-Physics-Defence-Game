@@ -9,7 +9,7 @@ public class PlayerProjectile : Projectile {
 		gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
 	}
 	
-	void OnCollisionEnter2D(Collision2D other) {
+	protected virtual void OnCollisionEnter2D(Collision2D other) {
 		if (other.gameObject.CompareTag("Enemy Projectile")) {
 			if (gameManager != null) {
 				EnemyProjectile projectileHit = other.gameObject.GetComponent<EnemyProjectile>();
