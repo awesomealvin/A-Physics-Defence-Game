@@ -4,8 +4,12 @@ using UnityEngine;
 
 public abstract class Ball : PlayerProjectile {
 
-	public abstract void UseAbilityOnTouch();
-	public abstract void UseAbilityOnHold();
+	protected Vector2 initialTouchPosition;
+	protected Vector2 currentTouchPosition;
+
+	public abstract void UseAbilityOnTouch(Vector2 initialTouchPosition);
+	public abstract void UseAbilityOnHold(Vector2 currentTouchPosition);
 	public abstract void UseAbilityOnRelease();
+
 
 }

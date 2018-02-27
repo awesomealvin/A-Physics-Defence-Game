@@ -102,7 +102,6 @@ public class Ballista : MonoBehaviour {
 				nextArrow = arrowQueue.Dequeue();
 			}
 			nextProjectile = nextArrow;
-
 			// Instantiates the arrow
 			GameObject projectile = Instantiate(nextArrow, shootPoint.position, Quaternion.identity);
 			// Calculates the force percentage

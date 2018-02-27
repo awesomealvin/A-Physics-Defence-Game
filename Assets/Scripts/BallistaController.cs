@@ -78,7 +78,7 @@ public class BallistaController : MonoBehaviour {
 
 				if (hasTouchedAbilityArea) {
 					if (ballista.lastBall != null) {
-						ballista.lastBall.UseAbilityOnTouch();
+						ballista.lastBall.UseAbilityOnTouch(GetCurrentTouchPos());
 					}
 				}
 
@@ -103,7 +103,7 @@ public class BallistaController : MonoBehaviour {
 			 */
 			if (hasTouchedAbilityArea) {
 				if (ballista.lastBall != null) {
-					ballista.lastBall.UseAbilityOnHold();
+					ballista.lastBall.UseAbilityOnHold(GetCurrentTouchPos());
 				}
 			}
 
@@ -112,7 +112,7 @@ public class BallistaController : MonoBehaviour {
 			 */
 			if (hasTouchedShootArea) {
 				EnableLengthPercentageText(true);
-				ballista.Aim(CalculateAngle(initialTouchPos, currentTouchPos));
+				ballista.Aim(CalculateAngle(initialTouchPos, currentTouchPos, ballista.flightGroove.transform.position));
 				CalculateLength();
 			}
 		}
@@ -168,13 +168,13 @@ public class BallistaController : MonoBehaviour {
 #endif
 	}
 
-	float CalculateAngle(Vector2 firstPos, Vector2 secondPos) {
+	public static float CalculateAngle(Vector2 firstPos, Vector2 secondPos, Vector2 position) {
 		// Gets the difference between the two points
 		Vector2 difference = firstPos - secondPos;
 
 		// Sets the initial click rotation
 		if (firstPos.Equals(secondPos)) {
-			difference = firstPos - (Vector2) ballista.flightGroove.transform.position;
+			difference = firstPos - (Vector2) position;
 		}
 
 		// Calculates the angle from the two points

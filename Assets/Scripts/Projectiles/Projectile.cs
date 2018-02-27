@@ -17,7 +17,7 @@ public class Projectile : MonoBehaviour {
 	private SpriteRenderer spriteRenderer;
 	private Color currentColor;
 
-	Rigidbody2D rb;
+	protected Rigidbody2D rb;
 	private float currentVelocity;
 
 	// Use this for initialization
