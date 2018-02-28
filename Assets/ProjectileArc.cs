@@ -75,8 +75,10 @@ public class ProjectileArc : MonoBehaviour {
 	}
 
 	public void DisableArc() {
-		foreach (GameObject g in projectileArcPoints) {
-			g.SetActive(false);
+		if (projectileArcPoints != null) {
+			foreach (GameObject g in projectileArcPoints) {
+				g.SetActive(false);
+			}
 		}
 
 	}

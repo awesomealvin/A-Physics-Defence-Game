@@ -33,31 +33,35 @@ public class Projectile : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-        currentVelocity = rb.velocity.magnitude;
-    }
+		currentVelocity = rb.velocity.magnitude;
+	}
 
-    private void FadeToDestroy() {
-        if (currentVelocity < velocityDestroyLimit) {
-            currentTimeToDestroy += Time.deltaTime;
-        } else {
-            currentTimeToDestroy = 0f;
-        }
+	private void FadeToDestroy() {
+		if (currentVelocity < velocityDestroyLimit) {
+			currentTimeToDestroy += Time.deltaTime;
+		} else {
+			currentTimeToDestroy = 0f;
+		}
 
-        if (currentTimeToDestroy >= timeToDestroy) {
-            shouldDestroy = true;
-        }
+		if (currentTimeToDestroy >= timeToDestroy) {
+			shouldDestroy = true;
+		}
 
-        if (shouldDestroy) {
-            FadeOut();
-        }
-    }
+		if (shouldDestroy) {
+			FadeOut();
+		}
+	}
 
-    private void FadeOut() {
-        currentColor.a = Mathf.Lerp(1f, 0f, currentFadeTime);
-        spriteRenderer.color = currentColor;
-        currentFadeTime += Time.deltaTime/fadeTime;
-        if (currentColor.a <= 0f) {
-            Destroy(gameObject);
-        }
-    }
+	private void FadeOut() {
+		currentColor.a = Mathf.Lerp(1f, 0f, currentFadeTime);
+		spriteRenderer.color = currentColor;
+		currentFadeTime += Time.deltaTime / fadeTime;
+		if (currentColor.a <= 0f) { 
+			DestroyGameObject();
+		}
+	}
+
+	protected virtual void DestroyGameObject() {
+		Destroy(gameObject);
+	}
 }

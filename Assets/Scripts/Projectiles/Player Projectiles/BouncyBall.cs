@@ -43,6 +43,10 @@ public class BouncyBall : Ball {
 		if (projectileArc != null) {
 			projectileArc.DisableArc();
 		}
+		ResetTimeScale();
+	}
+
+	void ResetTimeScale() {
 		Time.timeScale = 1.0f;
 		Time.fixedDeltaTime = 0.02f;
 	}
@@ -71,6 +75,11 @@ public class BouncyBall : Ball {
 			DeductCharges();
 		}
 
+	}
+
+	protected override void DestroyGameObject() {
+		base.DestroyGameObject();
+		ResetTimeScale();
 	}
 
 }
