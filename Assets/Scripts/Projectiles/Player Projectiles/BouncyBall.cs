@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BouncyBall : Ball {
 
+	private readonly float cameraSmoothSpeed = 15f;
+
 	float angle;
 	Vector2 difference;
 
@@ -17,12 +19,18 @@ public class BouncyBall : Ball {
 	private ProjectileArc projectileArc;
 
 	[SerializeField]
-	private float slowDownScaleFactor = 0.15f;
+	private float slowDownScaleFactor = 0.10f;
+
+	Vector3 defaultCameraPosition;
+	float defaultCameraSize;
 
 	override public void UseAbilityOnTouch(Vector2 initialTouchPosition) {
 		this.initialTouchPosition = initialTouchPosition;
 		Time.timeScale = slowDownScaleFactor;
 		Time.fixedDeltaTime = Time.timeScale * 0.02f;
+
+		defaultCameraPosition = Camera.main.transform.position;
+		defaultCameraSize = Camera.main.orthographicSize;
 	}
 
 	override public void UseAbilityOnHold(Vector2 currentTouchPosition) {
@@ -35,7 +43,8 @@ public class BouncyBall : Ball {
 				projectileArc.UpdateProjectileArc(rb, transform.position, angle, currentForcePercentage * maxForce);
 			}
 		}
-
+		
+		StartCoroutine(CameraFollowBall());
 	}
 
 	override public void UseAbilityOnRelease() {
@@ -44,6 +53,7 @@ public class BouncyBall : Ball {
 			projectileArc.DisableArc();
 		}
 		ResetTimeScale();
+		StartCoroutine(ResetCameraPosition());
 	}
 
 	void ResetTimeScale() {
@@ -81,5 +91,23 @@ public class BouncyBall : Ball {
 		base.DestroyGameObject();
 		ResetTimeScale();
 	}
+
+	IEnumerator CameraFollowBall() {
+		yield return new WaitForEndOfFrame();
+		Camera camera = Camera.main;
+		Vector3 cameraPosition = camera.transform.position;
+		Vector3 desiredPosition = new Vector3(transform.position.x, transform.position.y, camera.transform.position.z);
+		camera.transform.position = Vector3.Lerp(cameraPosition, desiredPosition, Time.deltaTime * cameraSmoothSpeed);
+	}
+
+	IEnumerator ResetCameraPosition() {
+		Camera camera = Camera.main;
+		while (camera.transform.position != defaultCameraPosition) {
+			camera.transform.position = Vector3.Slerp(camera.transform.position, defaultCameraPosition, Time.deltaTime * cameraSmoothSpeed);
+
+			yield return new WaitForEndOfFrame();
+		}
+	}
+
 
 }

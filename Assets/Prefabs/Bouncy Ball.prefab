@@ -134,10 +134,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4973bf18a94dbe74d9490a6b078b6d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  abilityCharges: 1
   maxDrawLength: 3
   maxForce: 40
   projectileArc: {fileID: 114332043048844002}
-  slowDownScaleFactor: 0.15
+  slowDownScaleFactor: 0.1
 --- !u!212 &212653729601097090
 SpriteRenderer:
   m_ObjectHideFlags: 1

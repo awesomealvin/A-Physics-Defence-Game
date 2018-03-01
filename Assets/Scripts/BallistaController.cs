@@ -36,6 +36,7 @@ public class BallistaController : MonoBehaviour {
 	[SerializeField]
 	private ProjectileArc projectileArc;
 
+
 	// Use this for initialization
 	void Start() {
 		EnableLengthPercentageText(false);
@@ -199,7 +200,12 @@ public class BallistaController : MonoBehaviour {
 	}
 
 	bool IsOnShootTouchArea(Vector2 touchPos) {
-		if (RectTransformUtility.RectangleContainsScreenPoint(shootTouchArea.rectTransform, touchPos)) {
+		// if (RectTransformUtility.RectangleContainsScreenPoint(shootTouchArea.rectTransform, touchPos)) {
+		// 	Debug.Log("Touched Shooting Area");
+		// 	return true;
+		// }
+		Debug.Log(touchPos);
+		if (RectTransformUtility.RectangleContainsScreenPoint(shootTouchArea.rectTransform, touchPos, Camera.main)) {
 			Debug.Log("Touched Shooting Area");
 			return true;
 		}
@@ -207,7 +213,7 @@ public class BallistaController : MonoBehaviour {
 	}
 
 	bool IsOnAbilityTouchArea(Vector2 touchPos) {
-		if (RectTransformUtility.RectangleContainsScreenPoint(abilityTouchArea.rectTransform, touchPos)) {
+		if (RectTransformUtility.RectangleContainsScreenPoint(abilityTouchArea.rectTransform, touchPos, Camera.main)) {
 			Debug.Log("Touched Ability Area");
 			return true;
 		}
@@ -220,7 +226,9 @@ public class BallistaController : MonoBehaviour {
 
 	private Vector2 GetCurrentTouchPos() {
 		if (Input.touchCount > 0) {
-			return Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+			// return Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+			return Input.GetTouch(0).position;
+			//return Input.GetTouch(0).position;
 		}
 
 		return new Vector2(0f, 0f);
@@ -250,11 +258,16 @@ public class BallistaController : MonoBehaviour {
 	}
 
 	private void DrawLine() {
-		lineRenderer.SetPosition(0, initialTouchPos);
-		lineRenderer.SetPosition(1, currentTouchPos);
+		Vector3 firstPosition = Camera.main.ScreenToWorldPoint(initialTouchPos);
+		firstPosition.z = 0f;
+		Vector3 secondPosition = Camera.main.ScreenToWorldPoint(currentTouchPos);
+		secondPosition.z = 0f;
+		lineRenderer.SetPosition(0, firstPosition);
+		lineRenderer.SetPosition(1, secondPosition);
 	}
 
 	private void EnableLine(bool enabled) {
 		lineRenderer.enabled = enabled;
 	}
+
 }
