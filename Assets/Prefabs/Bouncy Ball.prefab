@@ -135,10 +135,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityCharges: 1
-  maxDrawLength: 3
+  maxDrawLength: 60
   maxForce: 40
   projectileArc: {fileID: 114332043048844002}
   slowDownScaleFactor: 0.1
+  zoomPercentage: 0.15
 --- !u!212 &212653729601097090
 SpriteRenderer:
   m_ObjectHideFlags: 1

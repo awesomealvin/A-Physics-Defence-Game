@@ -32,7 +32,7 @@ public class Projectile : MonoBehaviour {
 		FadeToDestroy();
 	}
 
-	void FixedUpdate() {
+	virtual protected void FixedUpdate() {
 		currentVelocity = rb.velocity.magnitude;
 	}
 

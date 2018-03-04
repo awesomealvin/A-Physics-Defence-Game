@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class BouncyBall : Ball {
 
+	// Time it takes to smooth (smooth damp)
+	private readonly float cameraSmoothTime = 0.05f;
+	private Vector3 currentSmoothVelocity = Vector3.zero;
+
+	// Smooth speeds (Lerp)
 	private readonly float cameraSmoothSpeed = 15f;
+	private readonly float cameraSmoothSpeed2 = 7.5f;
 
 	float angle;
 	Vector2 difference;
@@ -21,39 +27,66 @@ public class BouncyBall : Ball {
 	[SerializeField]
 	private float slowDownScaleFactor = 0.10f;
 
+	[SerializeField]
+	private float zoomPercentage = 0.15f;
+	private float defaultCameraSize;
+	private float desiredCameraSize;
+
 	Vector3 defaultCameraPosition;
-	float defaultCameraSize;
+
+	bool touched = false;
+
+	Coroutine cameraFollowBall;
+	Coroutine cameraZoom;
+
+	override protected void FixedUpdate() {
+		base.FixedUpdate();
+		if (touched) {
+			CameraFollowBall();
+		}
+	}
+
+	void StopCoroutines() {
+		if (cameraFollowBall != null && cameraZoom != null) {
+			StopCoroutine(cameraFollowBall);
+			StopCoroutine(cameraZoom);
+		}
+
+	}
 
 	override public void UseAbilityOnTouch(Vector2 initialTouchPosition) {
+		touched = true;
+		StopCoroutines();
 		this.initialTouchPosition = initialTouchPosition;
-		Time.timeScale = slowDownScaleFactor;
-		Time.fixedDeltaTime = Time.timeScale * 0.02f;
-
+		// Time.timeScale = slowDownScaleFactor;
+		// Time.fixedDeltaTime = Time.timeScale * 0.02f;
 		defaultCameraPosition = Camera.main.transform.position;
 		defaultCameraSize = Camera.main.orthographicSize;
+		desiredCameraSize = defaultCameraSize - (zoomPercentage * defaultCameraSize);
 	}
 
 	override public void UseAbilityOnHold(Vector2 currentTouchPosition) {
 		this.currentTouchPosition = currentTouchPosition;
 		angle = MyCalculator.CalculateAngle(initialTouchPosition, currentTouchPosition, transform.position);
 		currentForcePercentage = MyCalculator.CalcuateForcePercentage(initialTouchPosition, currentTouchPosition, maxDrawLength);
-
 		if (abilityCharges > 0f) {
 			if (projectileArc != null) {
 				projectileArc.UpdateProjectileArc(rb, transform.position, angle, currentForcePercentage * maxForce);
 			}
 		}
-		
-		StartCoroutine(CameraFollowBall());
+
+		CameraZoom();
 	}
 
 	override public void UseAbilityOnRelease() {
+		touched = false;
 		Shoot();
 		if (projectileArc != null) {
 			projectileArc.DisableArc();
 		}
 		ResetTimeScale();
-		StartCoroutine(ResetCameraPosition());
+		cameraFollowBall = StartCoroutine(ResetCameraPosition());
+		cameraZoom = StartCoroutine(ResetCameraZoom());
 	}
 
 	void ResetTimeScale() {
@@ -88,26 +121,41 @@ public class BouncyBall : Ball {
 	}
 
 	protected override void DestroyGameObject() {
-		base.DestroyGameObject();
 		ResetTimeScale();
+		cameraFollowBall = StartCoroutine(ResetCameraPosition());
+		cameraZoom = StartCoroutine(ResetCameraZoom());
+		if (Camera.main.transform.position == defaultCameraPosition) {
+			base.DestroyGameObject();
+		}
 	}
 
-	IEnumerator CameraFollowBall() {
-		yield return new WaitForEndOfFrame();
+	void CameraFollowBall() {
 		Camera camera = Camera.main;
 		Vector3 cameraPosition = camera.transform.position;
 		Vector3 desiredPosition = new Vector3(transform.position.x, transform.position.y, camera.transform.position.z);
-		camera.transform.position = Vector3.Lerp(cameraPosition, desiredPosition, Time.deltaTime * cameraSmoothSpeed);
+		camera.transform.position = Vector3.SmoothDamp(cameraPosition, desiredPosition, ref currentSmoothVelocity, cameraSmoothTime);
+		// Debug.Log(cameraPosition + "|" + desiredPosition);
 	}
 
 	IEnumerator ResetCameraPosition() {
 		Camera camera = Camera.main;
 		while (camera.transform.position != defaultCameraPosition) {
-			camera.transform.position = Vector3.Slerp(camera.transform.position, defaultCameraPosition, Time.deltaTime * cameraSmoothSpeed);
-
-			yield return new WaitForEndOfFrame();
+			camera.transform.position = Vector3.Lerp(camera.transform.position, defaultCameraPosition, Time.deltaTime * cameraSmoothSpeed2);
+			yield return null;
 		}
 	}
 
+	void CameraZoom() {
+		Camera camera = Camera.main;
+		camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, desiredCameraSize, Time.deltaTime * cameraSmoothSpeed);
+	}
+
+	IEnumerator ResetCameraZoom() {
+		Camera camera = Camera.main;
+		while (camera.orthographicSize != defaultCameraSize) {
+			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, defaultCameraSize, Time.deltaTime * cameraSmoothSpeed2);
+			yield return null;
+		}
+	}
 
 }
