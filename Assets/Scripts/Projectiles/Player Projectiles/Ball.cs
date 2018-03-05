@@ -13,4 +13,6 @@ public abstract class Ball : PlayerProjectile {
 	public abstract void UseAbilityOnTouch(Vector2 initialTouchPosition);
 	public abstract void UseAbilityOnHold(Vector2 currentTouchPosition);
 	public abstract void UseAbilityOnRelease();
+
+	public abstract void Unfocus();
 }

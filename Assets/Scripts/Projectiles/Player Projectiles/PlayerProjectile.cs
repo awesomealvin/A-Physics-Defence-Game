@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerProjectile : Projectile {
-	private GameManager gameManager;
+	protected GameManager gameManager;
 
 	void Awake() {
 		gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();

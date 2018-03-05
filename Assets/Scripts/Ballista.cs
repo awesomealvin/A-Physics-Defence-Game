@@ -126,6 +126,9 @@ public class Ballista : MonoBehaviour {
 	// }
 
 	void SetLastBall(GameObject ball) {
+		if(lastBall!=null) {
+			lastBall.Unfocus();
+		}
 		lastBall = ball.GetComponent<Ball>();
 	}
 }

@@ -14,14 +14,20 @@ public class GameManager : MonoBehaviour {
 	[SerializeField]
 	private Text versionText;
 
+	public static float defaultCameraSize;
+	public static Vector3 defaultCameraPosition;
+
 	public void RestartCurrentLevel() {
 		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
+
 
 	void Start() {
 		totalPoints = 0;
 		TotalBlockPoints();
 		UpdateVersionText();
+		defaultCameraSize = Camera.main.orthographicSize;
+		defaultCameraPosition = Camera.main.transform.position;
 	}
 
 	public void AddPoints(int points) {

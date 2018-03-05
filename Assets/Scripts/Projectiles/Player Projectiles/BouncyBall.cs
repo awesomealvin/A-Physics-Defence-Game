@@ -5,7 +5,7 @@ using UnityEngine;
 public class BouncyBall : Ball {
 
 	// Time it takes to smooth (smooth damp)
-	private readonly float cameraSmoothTime = 0.05f;
+	private readonly float cameraSmoothTime = 0.025f;
 	private Vector3 currentSmoothVelocity = Vector3.zero;
 
 	// Smooth speeds (Lerp)
@@ -56,10 +56,9 @@ public class BouncyBall : Ball {
 
 	override public void UseAbilityOnTouch(Vector2 initialTouchPosition) {
 		touched = true;
-		StopCoroutines();
 		this.initialTouchPosition = initialTouchPosition;
-		// Time.timeScale = slowDownScaleFactor;
-		// Time.fixedDeltaTime = Time.timeScale * 0.02f;
+		Time.timeScale = slowDownScaleFactor;
+		Time.fixedDeltaTime = Time.timeScale * 0.02f;
 		defaultCameraPosition = Camera.main.transform.position;
 		defaultCameraSize = Camera.main.orthographicSize;
 		desiredCameraSize = defaultCameraSize - (zoomPercentage * defaultCameraSize);
@@ -134,13 +133,12 @@ public class BouncyBall : Ball {
 		Vector3 cameraPosition = camera.transform.position;
 		Vector3 desiredPosition = new Vector3(transform.position.x, transform.position.y, camera.transform.position.z);
 		camera.transform.position = Vector3.SmoothDamp(cameraPosition, desiredPosition, ref currentSmoothVelocity, cameraSmoothTime);
-		// Debug.Log(cameraPosition + "|" + desiredPosition);
 	}
 
 	IEnumerator ResetCameraPosition() {
 		Camera camera = Camera.main;
 		while (camera.transform.position != defaultCameraPosition) {
-			camera.transform.position = Vector3.Lerp(camera.transform.position, defaultCameraPosition, Time.deltaTime * cameraSmoothSpeed2);
+			camera.transform.position = Vector3.Lerp(camera.transform.position, GameManager.defaultCameraPosition, Time.deltaTime * cameraSmoothSpeed2);
 			yield return null;
 		}
 	}
@@ -153,9 +151,13 @@ public class BouncyBall : Ball {
 	IEnumerator ResetCameraZoom() {
 		Camera camera = Camera.main;
 		while (camera.orthographicSize != defaultCameraSize) {
-			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, defaultCameraSize, Time.deltaTime * cameraSmoothSpeed2);
+			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, GameManager.defaultCameraSize, Time.deltaTime * cameraSmoothSpeed2);
 			yield return null;
 		}
+	}
+
+	public override void Unfocus() {
+		StopCoroutines();
 	}
 
 }
