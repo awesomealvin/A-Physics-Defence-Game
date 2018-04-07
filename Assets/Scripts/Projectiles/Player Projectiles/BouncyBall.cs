@@ -39,10 +39,16 @@ public class BouncyBall : Ball {
 	Coroutine cameraFollowBall;
 	Coroutine cameraZoom;
 
+	bool isResettingCameraZoom;
+	bool isResettingCameraPosition;
+
 	override protected void FixedUpdate() {
 		base.FixedUpdate();
 		if (touched) {
-			CameraFollowBall();
+			if (!isResettingCameraZoom && !isResettingCameraPosition) {
+				CameraFollowBall();
+
+			}
 		}
 	}
 
@@ -51,7 +57,6 @@ public class BouncyBall : Ball {
 			StopCoroutine(cameraFollowBall);
 			StopCoroutine(cameraZoom);
 		}
-
 	}
 
 	override public void UseAbilityOnTouch(Vector2 initialTouchPosition) {
@@ -65,6 +70,9 @@ public class BouncyBall : Ball {
 	}
 
 	override public void UseAbilityOnHold(Vector2 currentTouchPosition) {
+		if (isResettingCameraZoom && isResettingCameraPosition) {
+			return;
+		}
 		this.currentTouchPosition = currentTouchPosition;
 		angle = MyCalculator.CalculateAngle(initialTouchPosition, currentTouchPosition, transform.position);
 		currentForcePercentage = MyCalculator.CalcuateForcePercentage(initialTouchPosition, currentTouchPosition, maxDrawLength);
@@ -116,16 +124,24 @@ public class BouncyBall : Ball {
 		} else {
 			DeductCharges();
 		}
-
 	}
 
 	protected override void DestroyGameObject() {
-		ResetTimeScale();
-		cameraFollowBall = StartCoroutine(ResetCameraPosition());
-		cameraZoom = StartCoroutine(ResetCameraZoom());
-		if (Camera.main.transform.position == defaultCameraPosition) {
+
+		// Don't know why I had these shit here..... This fixed the bug of holding touch while a ball is 
+		// getting destroyed.
+		if (this.focused) {
+			Debug.Log("Destroying");
+			ResetTimeScale();
+			cameraFollowBall = StartCoroutine(ResetCameraPosition());
+			cameraZoom = StartCoroutine(ResetCameraZoom());
+			if (Camera.main.transform.position == defaultCameraPosition) {
+				base.DestroyGameObject();
+			}
+		} else {
 			base.DestroyGameObject();
 		}
+
 	}
 
 	void CameraFollowBall() {
@@ -136,11 +152,15 @@ public class BouncyBall : Ball {
 	}
 
 	IEnumerator ResetCameraPosition() {
+		isResettingCameraPosition = true;
+
 		Camera camera = Camera.main;
 		while (camera.transform.position != defaultCameraPosition) {
 			camera.transform.position = Vector3.Lerp(camera.transform.position, GameManager.defaultCameraPosition, Time.deltaTime * cameraSmoothSpeed2);
 			yield return null;
 		}
+		isResettingCameraPosition = false;
+
 	}
 
 	void CameraZoom() {
@@ -149,11 +169,15 @@ public class BouncyBall : Ball {
 	}
 
 	IEnumerator ResetCameraZoom() {
+		isResettingCameraZoom = true;
+
 		Camera camera = Camera.main;
 		while (camera.orthographicSize != defaultCameraSize) {
+
 			camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, GameManager.defaultCameraSize, Time.deltaTime * cameraSmoothSpeed2);
 			yield return null;
 		}
+		isResettingCameraZoom = false;
 	}
 
 	public override void Unfocus() {

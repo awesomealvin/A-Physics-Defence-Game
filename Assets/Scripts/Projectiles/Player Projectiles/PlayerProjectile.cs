@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerProjectile : Projectile {
 	protected GameManager gameManager;
 
+	public bool focused = false;
+
 	void Awake() {
 		gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
 	}

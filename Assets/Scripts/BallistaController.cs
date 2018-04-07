@@ -204,9 +204,9 @@ public class BallistaController : MonoBehaviour {
 		// 	Debug.Log("Touched Shooting Area");
 		// 	return true;
 		// }
-		Debug.Log(touchPos);
+//		Debug.Log(touchPos);
 		if (RectTransformUtility.RectangleContainsScreenPoint(shootTouchArea.rectTransform, touchPos, Camera.main)) {
-			Debug.Log("Touched Shooting Area");
+			//Debug.Log("Touched Shooting Area");
 			return true;
 		}
 		return false;
@@ -214,7 +214,7 @@ public class BallistaController : MonoBehaviour {
 
 	bool IsOnAbilityTouchArea(Vector2 touchPos) {
 		if (RectTransformUtility.RectangleContainsScreenPoint(abilityTouchArea.rectTransform, touchPos, Camera.main)) {
-			Debug.Log("Touched Ability Area");
+			//Debug.Log("Touched Ability Area");
 			return true;
 		}
 		return false;

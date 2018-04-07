@@ -93,6 +93,12 @@ public class Ballista : MonoBehaviour {
 	/// <param name="forcePercentage">Percentage of the maximum shoot force to apply</param>
 	public void Shoot(float forcePercentage) {
 		if (arrowQueue.Count > 0) {
+
+			// Sets the focus of the previous ball to unfocused
+			if (lastBall != null) {
+				SetFocused(lastBall.gameObject, false);
+			}
+
 			GameObject nextArrow;
 			// Dequeue if unlimited arrow = true
 			if (unlimitedAmmo) {
@@ -108,6 +114,10 @@ public class Ballista : MonoBehaviour {
 			float force = forcePercentage * maxShootForce;
 			// Adds the force to the instantiated projectile
 			projectile.GetComponent<Rigidbody2D>().AddForce(flightGroove.right * force, ForceMode2D.Impulse);
+
+			// Sets focus of this projectile to true
+			SetFocused(projectile, true);
+
 			SetLastBall(projectile);
 
 			// Decrease ammo count text
@@ -126,9 +136,16 @@ public class Ballista : MonoBehaviour {
 	// }
 
 	void SetLastBall(GameObject ball) {
-		if(lastBall!=null) {
+		if (lastBall != null) {
 			lastBall.Unfocus();
 		}
 		lastBall = ball.GetComponent<Ball>();
+	}
+
+	void SetFocused(GameObject ball, bool focused) {
+		PlayerProjectile projectile = ball.GetComponent<PlayerProjectile>();
+		if (projectile != null) {
+			projectile.focused = focused;
+		}
 	}
 }

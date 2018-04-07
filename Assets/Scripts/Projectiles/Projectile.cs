@@ -62,6 +62,7 @@ public class Projectile : MonoBehaviour {
 	}
 
 	protected virtual void DestroyGameObject() {
+		//Debug.Log("Destroyed");
 		Destroy(gameObject);
 	}
 }
