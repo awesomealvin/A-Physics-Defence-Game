@@ -281,12 +281,12 @@ Prefab:
     - target: {fileID: 114646284072344658, guid: bc8ea642ae76bd548b01ef1ab98abfa5,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114646284072344658, guid: bc8ea642ae76bd548b01ef1ab98abfa5,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1968517551633982, guid: bc8ea642ae76bd548b01ef1ab98abfa5, type: 2}
       propertyPath: m_Name
@@ -1181,7 +1181,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
