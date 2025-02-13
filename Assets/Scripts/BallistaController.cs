@@ -65,7 +65,7 @@ public class BallistaController : MonoBehaviour {
 
 			if (hasTouchedAbilityArea) {
 				if (ballista.lastBall != null) {
-					ballista.lastBall.UseAbilityOnTouch();
+					ballista.lastBall.UseAbilityOnTouch(GetCurrentMousePos());
 				}
 			}
 
@@ -151,7 +151,8 @@ public class BallistaController : MonoBehaviour {
 			/// Shooting
 			/// </summary>
 			if (hasTouchedShootArea) {
-				ballista.Shoot(currentDrawLength / maxDrawLength);
+				currentForcePercentage = MyCalculator.CalcuateForcePercentage(initialTouchPos, currentTouchPos, maxDrawLength);
+				ballista.Shoot(currentForcePercentage);
 				EnableLengthPercentageText(false);
 			}
 

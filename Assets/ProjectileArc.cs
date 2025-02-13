@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Ballista))]
-[RequireComponent(typeof(BallistaController))]
 public class ProjectileArc : MonoBehaviour {
 
 	[SerializeField]
